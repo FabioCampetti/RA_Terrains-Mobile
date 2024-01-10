@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Map</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+    <script>
+        var map;
+        var marker;
+
+        function initMap() {
+            // Initial map position
+            var initialPosition = {
+                lat: -34.65648576214823,
+                lng: -58.622392164609984
+            };
+
+            // Create the map
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: initialPosition,
+                zoom: 14
+            });
+
+            // Add a marker at the initial position
+            marker = new google.maps.Marker({
+                position: initialPosition,
+                map: map,
+                draggable: true
+            });
+
+            // Event listener for map click to add a new marker
+            google.maps.event.addListener(map, 'click', function (event) {
+                // Remove existing marker
+                if (marker) {
+                    marker.setMap(null);
+                }
+
+                // Create a new marker at the clicked position
+                marker = new google.maps.Marker({
+                    position: event.latLng,
+                    map: map,
+                    draggable: true
+                });
+            });
+        }
+
+        function getSelectedPosition() {
+        	// Update the selected position
+                var selectedPosition = {
+                    lat: marker.position.lat(),
+                    lng: marker.position.lng()
+                };
+
+                // Send the selected position to Unity
+                Unity.call('GetSelectedPosition', JSON.stringify(selectedPosition));
+        }
+    </script>
+</head>
+
+<body>
+    <div id="map" style="height: 100vh;"></div>
+</body>
+
+</html>
