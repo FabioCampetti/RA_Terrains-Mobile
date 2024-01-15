@@ -1,8 +1,7 @@
 using System;
-using UnityEngine;
 
 [System.Serializable]
-public class Location: MonoBehaviour {
+public class Location {
 
     private const double EarthRadius = 6371000; // Earth's radius in meters
     
@@ -14,7 +13,7 @@ public class Location: MonoBehaviour {
         this.lng = lng;
     }
 
-    public string toString() {
+    public string ToString() {
         return lat + "," + lng;
     }
 

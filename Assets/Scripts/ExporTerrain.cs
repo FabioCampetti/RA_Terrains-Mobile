@@ -24,7 +24,7 @@ class ExportTerrain {
  
    public string Export(string file, float lowestElevation, int resolution, Location location) {
 
-      string fileName = Application.dataPath + $"/TerrainObjects/{file}.obj";
+      string fileName = Application.persistentDataPath + $"/TerrainObjects/{file}.obj";
       int w = terrainData.heightmapResolution;
       int h = terrainData.heightmapResolution;
       Vector3 meshScale = terrainData.size;
@@ -176,7 +176,6 @@ class ExportTerrain {
          Debug.Log("Error saving file: " + err.Message);
       }
       sw.Close();
-      CSVHandler.writeTerrainSizeCSV(fileName, (int)terrainData.size.x);
       terrainData = null;
 
       return fileName;

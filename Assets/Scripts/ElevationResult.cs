@@ -9,7 +9,7 @@ public ElevationResult(double elevation, Location location) {
     this.location = location;
     resolution = 0.0;
 }
-    public string toString() {
-        return location.toString() + "," + elevation;
+    public string ToString() {
+        return location.ToString() + "," + elevation;
     }
 }

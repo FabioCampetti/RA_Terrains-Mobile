@@ -5,8 +5,7 @@ using System.Linq;
 
 public static class CSVHandler {
 
-    private static string folderPath = Application.dataPath + $"/TerrainElevations/";
-    private static string terrainSizeCSV = Application.dataPath + $"/TerrainObjects/TerrainSizes.csv";
+    private static string folderPath = Application.persistentDataPath + $"/TerrainElevations/";
     public static void WriteCSV(string fileName, ElevationResult[][] elevationData) {
 
         TextWriter writer  = new StreamWriter($"{folderPath}{fileName}", false);
@@ -17,7 +16,7 @@ public static class CSVHandler {
 
         for(int i = 0; i < elevationData.Length; i++) {
             for(int j = 0; j < elevationData[i].Length; j++) {
-                writer.WriteLine(elevationData[i][j].toString());
+                writer.WriteLine(elevationData[i][j].ToString());
             }
         }
         writer.Close();
@@ -53,23 +52,6 @@ public static class CSVHandler {
         reader.Close();
 
         return new TerrainElevationData(highestElevation, lowestElevation, elevationResults);
-    }
-
-    public static void writeTerrainSizeCSV(string fileName, int terrainSize) {
-         using (TextWriter writer = new StreamWriter(terrainSizeCSV, true)) {
-        writer.WriteLine($"{fileName}, {terrainSize}");
-        }
-    }
-
-    public static int readTerrainSizeCSV(string fileName) {
-        string[] lineas = File.ReadAllLines(terrainSizeCSV);
-        foreach (string line in lineas) {
-            string[] data = line.Split(",");
-            if (data[0] == fileName) {
-                return int.Parse(data[1]);
-            }
-        }
-        return 0;
     }
 
     public static string getSavedElevationsFileName(Location location, int heightmapResolution, int terrainSize) {

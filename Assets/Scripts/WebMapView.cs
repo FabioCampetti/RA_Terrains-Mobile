@@ -2,49 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class WebMapView : MonoBehaviour {
     WebViewObject webViewObject;
     private Coroutine webCoroutine;
+    public TMP_InputField terrainSizeInputField;
 
     public Button ADDTerrainButton;
 
     public Button BackButton;
 
+    public Location selectedLocation;
 
-    void OnEnable()
-    {
+
+    void OnEnable() {
+
+        Debug.Log("WEBVIEW STARTED");
         ADDTerrainButton = transform.Find("ADDTerrain")?.GetComponent<Button>();
-        if (ADDTerrainButton)
-        {
-            ADDTerrainButton.onClick.AddListener(() => LoadPosition());
+        terrainSizeInputField = transform.Find("TerrainSize")?.GetComponent<TMP_InputField>();
+        if (ADDTerrainButton){
+            ADDTerrainButton.onClick.AddListener(() => RetrieveSelectedPosition());
         }
         
         BackButton = transform.Find("Back")?.GetComponent<Button>();
-         if (BackButton)
-        {
+         if (BackButton){
             BackButton.onClick.AddListener(() => DeactivateWebView());
         }
-        webCoroutine = StartCoroutine(WebCoroutine());
-        Debug.Log("INICIO WEB CORUTINE");
+        if (terrainSizeInputField) {
+            terrainSizeInputField.onValueChanged.AddListener(UpdateRatius);
+        }
+
+        webViewObject = GameObject.Find("WebViewObject").AddComponent<WebViewObject>();
+        WebCoroutine();
     }
 
     // Coroutine example
-    IEnumerator WebCoroutine() {
-        GameObject terrainMenuCanvas = GameObject.Find("TerrainMenuCanvas");
+    void WebCoroutine() {
 
-        webViewObject = (new GameObject("WebViewObject")).AddComponent<WebViewObject>();
-        webViewObject.transform.SetParent(terrainMenuCanvas.transform);
         webViewObject.Init(
             cb: (msg) =>
             {
-                Debug.Log($"CallFromJS[{msg}]");
                 if (msg is string) {
-                    double lat,lng;
-                    Debug.Log("MENSAJE: " + msg);
+                    double lat, lng;
                     string[] coordinates = msg.Split(',');
                     if (coordinates.Length == 2 && double.TryParse(coordinates[0], out lat) && double.TryParse(coordinates[1], out lng)) {
-                        RetrieveSelectedPosition(lat, lng);
+                        selectedLocation = new Location(lat,lng);
                     }
                 }
             },
@@ -70,15 +73,6 @@ public class WebMapView : MonoBehaviour {
             },
             ld: (msg) =>
             {
-                Debug.Log($"CallOnLoaded[{msg}]");
-                webViewObject.EvaluateJS(@"
-                    window.Unity = { 
-                        call: function(msg) { 
-                            window.location = 'unity:' + msg; 
-                        } 
-                    }
-                ");
-                webViewObject.EvaluateJS($"Unity.call('ua=' + navigator.userAgent)");
                 // Call the JavaScript function to initialize the map
                 webViewObject.EvaluateJS("initMap();");
             }
@@ -89,59 +83,50 @@ public class WebMapView : MonoBehaviour {
         // Set the margins and visibility of the WebView
         if(ADDTerrainButton) {
              webViewObject.SetMargins(5, 0, 0, Screen.height / 2);
-             Debug.Log("Encontre el boton");
         } else {
             webViewObject.SetMargins(0,0,0,0);
-            Debug.Log("No encontre el boton");
         }
-        Debug.Log($"file://{Application.persistentDataPath}/StreamingAssets/map.html");
         // Load the HTML file into the WebView
         webViewObject.LoadURL($"file://{Application.persistentDataPath}/StreamingAssets/map.html");
-        yield break;
     }
 
-    private void LoadPosition() {
-        Debug.Log("LOAD POSITION");
-        webViewObject.EvaluateJS("getSelectedPosition();");
+    private void UpdateRatius(string input) {
+        int ratius = int.Parse(input);
+        webViewObject.EvaluateJS($"updateRadius({ratius})");
     }
 
-    // Example method to deactivate the WebView
+    // Coroutine to introduce a delay before calling getSelectedPosition()
+    void RetrieveSelectedPosition() {
+        DeactivateWebView();
+        GetSelectedPosition();
+
+    }
+
     void DeactivateWebView() {
         // Hide the WebView
         webViewObject.SetVisibility(false);
 
-        // Stop the coroutine when deactivating the WebView
-        if (webCoroutine != null)
-        {
-            StopCoroutine(webCoroutine);
-        }
-
         // Destroy the WebViewObject
-        if (webViewObject != null)
-        {
-            Destroy(webViewObject.gameObject);
+        if (webViewObject != null) {
             webViewObject = null;
         }
     }
 
-    // Coroutine to introduce a delay before calling getSelectedPosition()
-    void RetrieveSelectedPosition(double lat, double lng) {
-        DeactivateWebView();
-        GetSelectedPosition(lat,lng);
-    }
-
     // Callback method to be called from JavaScript
-    void GetSelectedPosition(double lat, double lng) {
+    void GetSelectedPosition() {
 
         // Use lat and lng in Unity as needed
-        Debug.Log($"Selected Position - Latitude: {lat}, Longitude: {lng}");
+        Debug.Log($"Selected Position - Latitude: {selectedLocation.lat}, Longitude: {selectedLocation.lng}");
 
-        TerrainProyectionEventManager.instance.InvokeCoordinatesReceived(new Location(lat,lng));
+        TerrainProyectionEventManager.instance.InvokeCoordinatesReceived(selectedLocation);
         if(!ADDTerrainButton) {
             GameManager.instance.DesactivateCamera();
             GameManager.instance.TerrainProyectionMenu();
             gameObject.AddComponent<TerrainProyection>().LoadTerrain();
+        } else {
+            terrainSizeInputField.onValueChanged.RemoveAllListeners();
+            ADDTerrainButton.onClick.RemoveAllListeners();
+            gameObject.GetComponent<TerrainMenuManager>().OnGenerateTerrainButtonClick();
         }
-
     }
 }
