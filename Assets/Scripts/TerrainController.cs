@@ -1,20 +1,20 @@
 using Dummiesman;
+using System;
+using System.IO;
 using UnityEngine;
 
 public class TerrainController : MonoBehaviour {
 
     public GameObject terrainObject;
-    // Start is called before the first frame update
     public GameObject importedObject;
-
     public int terrainSize;
     public float terrainHeightDifference;
 
     public void LoadAndAddObject(string fileName) {
 
         DisableTerrain();
-        ExtractTerrainData();
-        
+        ExtractTerrainData(fileName);
+
         terrainObject = GameObject.Find("TerrainObject");
         importedObject = new OBJLoader().Load(fileName,null);
 
@@ -109,9 +109,8 @@ public class TerrainController : MonoBehaviour {
                     }
                 }
             }
-            catch (Exception e) {
-            Debug.LogError($"Error reading file: {e.Message}");
+        } catch (Exception e) {
+                Debug.LogError($"Error reading file: {e.Message}");
             }
-        }
     }
 }
