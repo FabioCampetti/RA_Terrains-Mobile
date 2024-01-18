@@ -9,6 +9,10 @@ public class TerrainProyectionEventManager : MonoBehaviour {
     public string filePath;
     public Location location;
 
+    public int terrainSize;
+
+    public float lowestElevation;
+
     private void Awake() {
         if (instance != null && instance != this){
 
@@ -24,5 +28,13 @@ public class TerrainProyectionEventManager : MonoBehaviour {
 
     public void InvokeCoordinatesReceived(Location location) {
         this.location = location;
+    }
+
+    public void InvokeTerrainSizeReceived(int terrainSize) {
+        this.terrainSize = terrainSize;
+    }
+
+    public void InvokeLowestElevationReceived(float lowestElevation) {
+        this.lowestElevation = lowestElevation;
     }
 }
