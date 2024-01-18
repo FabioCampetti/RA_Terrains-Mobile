@@ -18,7 +18,6 @@ public class WebMapView : MonoBehaviour {
 
     void OnEnable() {
 
-        Debug.Log("WEBVIEW STARTED");
         ADDTerrainButton = transform.Find("ADDTerrain")?.GetComponent<Button>();
         terrainSizeInputField = transform.Find("TerrainSize")?.GetComponent<TMP_InputField>();
         if (ADDTerrainButton){
@@ -44,37 +43,38 @@ public class WebMapView : MonoBehaviour {
             cb: (msg) =>
             {
                 if (msg is string) {
-                    double lat, lng;
-                    string[] coordinates = msg.Split(',');
-                    if (coordinates.Length == 2 && double.TryParse(coordinates[0], out lat) && double.TryParse(coordinates[1], out lng)) {
-                        selectedLocation = new Location(lat,lng);
+                    if (msg == "Proyect") {
+                        RetrieveSelectedPosition();
+                    } else {
+                        double lat, lng;
+                        string[] coordinates = msg.Split(',');
+                        if (coordinates.Length == 2 && double.TryParse(coordinates[0], out lat) && double.TryParse(coordinates[1], out lng)) {
+                            selectedLocation = new Location(lat,lng);
+                        }
                     }
                 }
             },
-            err: (msg) =>
-            {
+            err: (msg) => {
                 Debug.Log($"CallOnError[{msg}]");
             },
-            httpErr: (msg) =>
-            {
+            httpErr: (msg) => {
                 Debug.Log($"CallOnHttpError[{msg}]");
             },
-            started: (msg) =>
-            {
+            started: (msg) => {
                 Debug.Log($"CallOnStarted[{msg}]");
             },
-            hooked: (msg) =>
-            {
+            hooked: (msg) => {
                 Debug.Log($"CallOnHooked[{msg}]");
             },
-            cookies: (msg) =>
-            {
+            cookies: (msg) => {
                 Debug.Log($"CallOnCookies[{msg}]");
             },
-            ld: (msg) =>
-            {
+            ld: (msg) => {
                 // Call the JavaScript function to initialize the map
-                webViewObject.EvaluateJS("initMap();");
+                int terrainSize = TerrainProyectionEventManager.instance.terrainSize;
+                double lat = TerrainProyectionEventManager.instance.location.lat;
+                double lng = TerrainProyectionEventManager.instance.location.lng;
+                webViewObject.EvaluateJS($"initMap({terrainSize},{lat},{lng});");
             }
         );
 
@@ -86,8 +86,8 @@ public class WebMapView : MonoBehaviour {
         } else {
             webViewObject.SetMargins(0,0,0,0);
         }
-        // Load the HTML file into the WebView
-        webViewObject.LoadURL($"file://{Application.persistentDataPath}/StreamingAssets/map.html");
+        TextAsset htmlFile = Resources.Load<TextAsset>("map");
+        webViewObject.LoadHTML(htmlFile.text);
     }
 
     private void UpdateRatius(string input) {
@@ -119,14 +119,13 @@ public class WebMapView : MonoBehaviour {
         Debug.Log($"Selected Position - Latitude: {selectedLocation.lat}, Longitude: {selectedLocation.lng}");
 
         TerrainProyectionEventManager.instance.InvokeCoordinatesReceived(selectedLocation);
-        if(!ADDTerrainButton) {
+        if(ADDTerrainButton) {
+            terrainSizeInputField.onValueChanged.RemoveAllListeners();
+            gameObject.GetComponent<TerrainMenuManager>().OnGenerateTerrainButtonClick();
+        } else {
             GameManager.instance.DesactivateCamera();
             GameManager.instance.TerrainProyectionMenu();
             gameObject.AddComponent<TerrainProyection>().LoadTerrain();
-        } else {
-            terrainSizeInputField.onValueChanged.RemoveAllListeners();
-            ADDTerrainButton.onClick.RemoveAllListeners();
-            gameObject.GetComponent<TerrainMenuManager>().OnGenerateTerrainButtonClick();
         }
     }
 }

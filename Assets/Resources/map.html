@@ -14,101 +14,81 @@
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
     <script>
-        var map;
-        var marker;
-        var circle;
+        let map;
+        let marker;
+        let circle;
+        let originalPosition;
+        let initialPosition;
 
-        function initMap() {
-            // Try HTML5 geolocation
+        function initMap(terrainSize, originalLat, originalLng) {
+
+            originalPosition = {
+                lat: originalLat,
+                lng: originalLng
+            };
+
+            function createMap(centerPosition) {
+                return new google.maps.Map(document.getElementById('map'), {
+                    center: centerPosition,
+                    zoom: 14
+                });
+            }
+
+            function createMarker(map, position) {
+                return new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    draggable: true
+                });
+            }
+
+            function createCircle(map, centerPosition, radius) {
+                return new google.maps.Circle({
+                    map: map,
+                    center: centerPosition,
+                    radius: radius,
+                    editable: false,
+                    draggable: false
+                });
+            }
+
+            function setupMapAndMarker(centerPosition) {
+                map = createMap(centerPosition);
+                marker = createMarker(map, centerPosition);
+                circle = createCircle(map, centerPosition, terrainSize);
+
+                google.maps.event.addListener(map, 'click', function (event) {
+                    changeMarker(event.latLng);
+                });
+            }
+
+             function handleLocationError(hasGeolocation, fallbackPosition) {
+                map = createMap(fallbackPosition);
+                marker = createMarker(map, fallbackPosition);
+
+                google.maps.event.addListener(map, 'click', function (event) {
+                    changeMarker(event.latLng);
+                });
+            }
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (position) {
-                    var initialPosition = {
+                    initialPosition = {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     };
 
-                    // Create the map
-                    map = new google.maps.Map(document.getElementById('map'), {
-                        center: initialPosition,
-                        zoom: 14
-                    });
-
-                    // Add a marker at the initial position
-                    marker = new google.maps.Marker({
-                        position: initialPosition,
-                        map: map,
-                        draggable: true
-                    });
-
-                     // Add a circle around the marker with a default radius of 100 meters
-                    circle = new google.maps.Circle({
-                        map: map,
-                        center: initialPosition,
-                        radius: 0, // Specify the radius in meters here
-                        editable: false,
-                        draggable: false
-                    });
-
+                    setupMapAndMarker(initialPosition);
                     getSelectedPosition();
-
-                    // Event listener for map click to add a new marker
-                    google.maps.event.addListener(map, 'click', function (event) {
-                        // Remove existing marker
-                        if (marker) {
-                            marker.setMap(null);
-                        }
-
-                        // Create a new marker at the clicked position
-                        marker = new google.maps.Marker({
-                            position: event.latLng,
-                            map: map,
-                            draggable: true
-                        });
-
-                        // Create a new circle around the marker with a default radius of 100 meters
-                        circle.setCenter(marker.getPosition());
-
-                        getSelectedPosition();
-                    });
                 }, function () {
-                    handleLocationError(true, map.getCenter());
-                });
+                        handleLocationError(true, map.getCenter());
+                    });
             } else {
                 // Browser doesn't support Geolocation
                 handleLocationError(false, map.getCenter());
             }
         }
 
-        function handleLocationError(browserHasGeolocation, pos) {
-            // Default to a fallback position if geolocation fails
-            var fallbackPosition = {
-                lat: -34.65648576214823,
-                lng: -58.622392164609984
-            };
-
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: fallbackPosition,
-                zoom: 14
-            });
-
-            marker = new google.maps.Marker({
-                position: fallbackPosition,
-                map: map,
-                draggable: true
-            });
-
-            google.maps.event.addListener(map, 'click', function (event) {
-                if (marker) {
-                    marker.setMap(null);
-                }
-
-                marker = new google.maps.Marker({
-                    position: event.latLng,
-                    map: map,
-                    draggable: true
-                });
-            });
-        }
 
          function updateRadius(newRadius) {
             // Check if the circle and marker exist
@@ -127,6 +107,22 @@
             // Send the selected position to Unity
             Unity.call(marker.position.lat() + ',' + marker.position.lng());
         }
+
+        function changeMarker(location) {
+            if (marker) {
+                    marker.setMap(null);
+                }
+
+            marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                draggable: true
+            });
+
+            circle.setCenter(marker.getPosition());
+            getSelectedPosition();
+        }
+
     </script>
 </head>
 
@@ -134,7 +130,9 @@
     <div id="map" style="height: 100vh;"></div>
 
     <!-- Added button to execute getSelectedPosition() function -->
-    <button onclick="getSelectedPosition()">Proyect Terrain</button>
+    <button onclick="changeMarker(initialPosition)">User Position</button>
+    <button onclick="changeMarker(originalPosition)">Terrain Original Position</button>
+    <button onclick="Unity.call('Proyect')">Proyect Terrain</button>
 </body>
 
 </html>
