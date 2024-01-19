@@ -74,7 +74,8 @@ public class WebMapView : MonoBehaviour {
                 int terrainSize = TerrainProyectionEventManager.instance.terrainSize;
                 double lat = TerrainProyectionEventManager.instance.location.lat;
                 double lng = TerrainProyectionEventManager.instance.location.lng;
-                webViewObject.EvaluateJS($"initMap({terrainSize},{lat},{lng});");
+                Debug.Log(terrainSize + " , " + lat + " , " + lng);
+                webViewObject.EvaluateJS($"initMap({terrainSize}," + $"{lat}," + $"{lng});");
             }
         );
 
@@ -86,8 +87,8 @@ public class WebMapView : MonoBehaviour {
         } else {
             webViewObject.SetMargins(0,0,0,0);
         }
-        TextAsset htmlFile = Resources.Load<TextAsset>("map");
-        webViewObject.LoadHTML(htmlFile.text);
+        // Load the HTML file into the WebView
+        webViewObject.LoadURL($"file://{Application.persistentDataPath}/StreamingAssets/map.html");
     }
 
     private void UpdateRatius(string input) {

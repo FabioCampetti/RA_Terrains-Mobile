@@ -21,7 +21,7 @@ public class FileLoader : MonoBehaviour {
     }
 
     public void LoadFile(bool isProjection) {
-        string filePath = " ";
+        string filePath = "";
         string initialDirectory = Application.persistentDataPath + "/TerrainObjects";
 
         FileBrowser.SetFilters( true, new FileBrowser.Filter("Objects", ".obj" ));
@@ -60,20 +60,21 @@ public class FileLoader : MonoBehaviour {
                 while (!reader.EndOfStream) {
                     string line = reader.ReadLine();
                     string[] tokens = line.Split(':');
-
-
                     if (tokens.Length >= 2) {
                         string key = tokens[0].Trim();
                         string value = tokens[1].Trim();
 
+                        Debug.Log("TOKEN: " + key);
+
                         switch (key) {
-                            case "Size":
+                            case "# Size":
                                 terrainSize = int.Parse(value);
+                                Debug.Log("TERRAIN: " + terrainSize);
                                 break;
-                            case "Lowest Elevation":
+                            case "# Lowest Elevation":
                                 lowestElevation = float.Parse(value);
                                 break;
-                            case "Location":
+                            case "# Location":
                                 string[] coordinates = value.Split(',');
                                 location = new Location(double.Parse(coordinates[0]), double.Parse(coordinates[1]));
                                 break;
@@ -88,6 +89,7 @@ public class FileLoader : MonoBehaviour {
                         break;
                     }
                 }
+                reader.Close();
             }
         } catch (Exception e) {
                 Debug.LogError($"Error reading file: {e.Message}");
