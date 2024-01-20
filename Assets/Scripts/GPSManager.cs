@@ -15,8 +15,6 @@ public class GPSManager : MonoBehaviour {
     }
     // Start is called before the first frame update
     IEnumerator StartGPS() {
-
-        Debug.Log("GPSManager Ejecutando");
         
         if (!Input.location.isEnabledByUser)
             yield break;
@@ -47,7 +45,7 @@ public class GPSManager : MonoBehaviour {
         InvokeRepeating("UpdateCamaraPosition", 1, 1);
     }
 
-    public Vector3 DistanceToOrigin(Location location) {
+    private Vector3 DistanceToOrigin(Location location) {
             Vector3 newPos;
             Location origin = new Location(0,0);
 
@@ -67,7 +65,7 @@ public class GPSManager : MonoBehaviour {
             return newPos;
     }
 
-    public void SetPositionTerrain() {
+    private void SetPositionTerrain() {
 
         for(int i = 0; i < objetos.Length; i++)
         {
@@ -77,42 +75,29 @@ public class GPSManager : MonoBehaviour {
         }
     }
 
-    public void UpdateCamaraPosition()
-    {
+    private void UpdateCamaraPosition() {
         userLocation.lat = Input.location.lastData.latitude;
         userLocation.lng = Input.location.lastData.longitude;
-
        
-            Vector3 newPosition = DistanceToOrigin(userLocation);
+        Vector3 newPosition = DistanceToOrigin(userLocation);
+        Vector2 newCameraPosition = new Vector2(newPosition.x, newPosition.z);
+        if(isInTerrainRange(newCameraPosition, new Vector2(objetos[0].transform.position.x, objetos[0].transform.position.z))){
+            camera.transform.position = GetPositionHeight(newCameraPosition);
+        } else {
             camera.transform.position = new Vector3(newPosition.x, 2f, newPosition.z);
-        Debug.Log("Camara Position" + camera.transform.position.x + " , " +camera.transform.position.z);
-        Debug.Log("Terrain Position" + objetos[0].transform.position.x + " , " +objetos[0].transform.position.z);
-
+        }
     }
 
-
-    public Vector3 UpdatePosition(Location userLocation, Location poiLocation)
-    {
-        Vector3 newPos;
-
-        Location projectionY = new Location(poiLocation.lat, userLocation.lng);
-        Location projectionX = new Location(userLocation.lat, poiLocation.lng);
-        double distX = CalculateDistanceKM(userLocation, projectionX);
-        double distY = CalculateDistanceKM(userLocation, projectionY);
-
-        if (poiLocation.lat < userLocation.lat)
-            distY *= -1.0;
-
-        if (poiLocation.lng < userLocation.lng)
-            distX *= -1.0;
-
-        newPos = new Vector3(((float)(distX * 1000.0)), -7000, ((float)(distY * 1000.0)));
-
-        return newPos;
+    private bool isInTerrainRange(Vector2 cameraPosition, Vector2 terrainPosition) {
+        int halfTerrainSize = TerrainProyectionEventManager.instance.terrainSize/2;
+        return (cameraPosition.x >= terrainPosition.x - halfTerrainSize) &&
+               (cameraPosition.x <= terrainPosition.x + halfTerrainSize) &&
+               (cameraPosition.y >= terrainPosition.y - halfTerrainSize) &&
+               (cameraPosition.y <= terrainPosition.y + halfTerrainSize);
     }
 
-    public double CalculateDistanceKM(Location p1, Location p2)
-    {
+    private double CalculateDistanceKM(Location p1, Location p2) {
+        
         double dLat = (p2.lat - p1.lat) * pi_sobre_180;  // deg2rad below
         double dLon = (p2.lng - p1.lng) * pi_sobre_180;
 
@@ -127,7 +112,7 @@ public class GPSManager : MonoBehaviour {
         return d;
     }
 
-    public Vector3 GetPositionHeight(Vector2 position) {
+    private Vector3 GetPositionHeight(Vector2 position) {
 
         Vector3 initialPosition = new Vector3(position.x, 10000f, position.y);
 
