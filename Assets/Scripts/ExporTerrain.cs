@@ -63,20 +63,10 @@ class ExportTerrain {
          meshBounds.Encapsulate(tVertices[i]);
       }
 
-      // Calculate the center of the terrain object
-      Vector3 terrainCenter = new Vector3((w - 1) * meshScale.x / 2, meshBounds.center.y, (h - 1) * meshScale.z / 2);
-
-      // Adjust the center of the object
+      // Adjust the position of each vertex to set the pivot at the bottom along the Y-axis
+      float minY = meshBounds.min.y;
       for (int i = 0; i < tVertices.Length; i++) {
-         tVertices[i] -= terrainCenter;
-      }
-
-      // Calculate the offset to center the mesh
-      Vector3 offsetToCenter = meshBounds.center - terrainCenter;
-
-      // Adjust the position of each vertex
-      for (int i = 0; i < tVertices.Length; i++) {
-         tVertices[i] -= offsetToCenter;
+         tVertices[i] -= new Vector3(meshBounds.center.x, minY, meshBounds.center.z);
       }
  
       int  index = 0;

@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour {
 
     public event Action OnTerrainPositionMenu;
 
+    public Camera mainCamera;
+
 
     public static GameManager instance;
 
@@ -27,6 +29,7 @@ public class GameManager : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         MainMenu();
+        mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
     public void MainMenu(){
@@ -59,8 +62,13 @@ public class GameManager : MonoBehaviour {
     }
 
     public void DesactivateCamera() {
-    Camera mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
      mainCamera.gameObject.SetActive(false);
+    }
+
+    public void ActivateCamera() {
+    Camera newCamera = GameObject.Find("NewCamera").GetComponent<Camera>();
+    mainCamera.gameObject.SetActive(true);
+    newCamera.gameObject.SetActive(false);
     }
 
     public void CloseApp() {

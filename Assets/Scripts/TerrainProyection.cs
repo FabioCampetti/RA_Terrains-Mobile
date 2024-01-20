@@ -48,6 +48,8 @@ public class TerrainProyection : MonoBehaviour {
     // Assign the mesh to the MeshCollider
     meshCollider.sharedMesh = mesh;
     Location location = new Location(TerrainProyectionEventManager.instance.location.lat, TerrainProyectionEventManager.instance.location.lng);
+    LocationComponent locationComponent = terrain.AddComponent<LocationComponent>();
+    locationComponent.location = location;
     GPSManager GPSManagerScript = GPSManager.GetComponent<GPSManager>();
     GPSManagerScript.objetos = new GameObject[] { terrain };
     GPSManagerScript.camera = GameObject.Find("NewCamera");

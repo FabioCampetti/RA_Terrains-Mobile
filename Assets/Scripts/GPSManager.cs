@@ -71,7 +71,8 @@ public class GPSManager : MonoBehaviour {
 
         for(int i = 0; i < objetos.Length; i++)
         {
-            Vector3 nuevaPosicion = DistanceToOrigin(objetos[i].GetComponent<Location>());
+            Vector3 nuevaPosicion = DistanceToOrigin(objetos[i].GetComponent<LocationComponent>().location);
+            nuevaPosicion.y = TerrainProyectionEventManager.instance.lowestElevation;
             objetos[i].transform.position = nuevaPosicion;
         }
     }
@@ -83,7 +84,7 @@ public class GPSManager : MonoBehaviour {
 
        
             Vector3 newPosition = DistanceToOrigin(userLocation);
-            camera.transform.position = GetPositionHeight(new Vector2(newPosition.x, newPosition.z));
+            camera.transform.position = new Vector3(newPosition.x, 2f, newPosition.z);
         Debug.Log("Camara Position" + camera.transform.position.x + " , " +camera.transform.position.z);
         Debug.Log("Terrain Position" + objetos[0].transform.position.x + " , " +objetos[0].transform.position.z);
 
