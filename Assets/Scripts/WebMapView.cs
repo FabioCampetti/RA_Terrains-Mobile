@@ -117,7 +117,7 @@ public class WebMapView : MonoBehaviour {
     void GetSelectedPosition() {
 
         // Use lat and lng in Unity as needed
-        Debug.Log($"Selected Position - Latitude: {selectedLocation.lat}, Longitude: {selectedLocation.lng}");
+        //Debug.Log($"Selected Position - Latitude: {selectedLocation.lat}, Longitude: {selectedLocation.lng}");
 
         TerrainProyectionEventManager.instance.InvokeCoordinatesReceived(selectedLocation);
         if(ADDTerrainButton) {

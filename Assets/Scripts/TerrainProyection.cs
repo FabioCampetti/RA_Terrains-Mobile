@@ -6,10 +6,9 @@ public class TerrainProyection : MonoBehaviour {
 
     public GameObject GPSManager;
     public GameObject terrain;
-
-    public Camera mainCamera;
-
     public GameObject TerrainProyectionObj;
+
+    public GameObject camera;
 
     public void LoadTerrain() {
 
@@ -19,9 +18,7 @@ public class TerrainProyection : MonoBehaviour {
     TerrainProyectionObj = GameObject.Find("TerrainProyection");
     
     terrain = new OBJLoader().Load(fileName,null);
-    if (TerrainProyectionObj == null) {
-        Debug.Log("Es null");
-    }
+
     Texture2D texture = Resources.Load<Texture2D>("TerrainTexture");
     if (texture == null) {
         Debug.Log("Failed to load texture at path: ");
@@ -52,8 +49,7 @@ public class TerrainProyection : MonoBehaviour {
     locationComponent.location = location;
     GPSManager GPSManagerScript = GPSManager.GetComponent<GPSManager>();
     GPSManagerScript.objetos = new GameObject[] { terrain };
-    GPSManagerScript.camera = GameObject.Find("NewCamera");
-
+    GPSManagerScript.camera.SetActive(true);
     GPSManagerScript.InitializeGPSManager();
    }
 }

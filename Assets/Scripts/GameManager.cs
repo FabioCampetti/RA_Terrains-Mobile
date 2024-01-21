@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public void ActivateCamera() {
-    Camera newCamera = GameObject.Find("NewCamera").GetComponent<Camera>();
+    GameObject newCamera = GameObject.Find("NewCamera");
     mainCamera.gameObject.SetActive(true);
     newCamera.gameObject.SetActive(false);
     }

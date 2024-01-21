@@ -64,12 +64,10 @@ public class FileLoader : MonoBehaviour {
                         string key = tokens[0].Trim();
                         string value = tokens[1].Trim();
 
-                        Debug.Log("TOKEN: " + key);
 
                         switch (key) {
                             case "# Size":
                                 terrainSize = int.Parse(value);
-                                Debug.Log("TERRAIN: " + terrainSize);
                                 break;
                             case "# Lowest Elevation":
                                 lowestElevation = float.Parse(value);

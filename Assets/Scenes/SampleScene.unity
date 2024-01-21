@@ -1113,7 +1113,7 @@ GameObject:
   - component: {fileID: 458258618}
   - component: {fileID: 458258617}
   m_Layer: 5
-  m_Name: Button
+  m_Name: BackButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1183,6 +1183,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 1447643465}
+        m_TargetAssemblyTypeName: UnityEngine.MonoBehaviour, UnityEngine
+        m_MethodName: StopAllCoroutines
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: StartGPS()
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 955022380}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: ActivateCamera
@@ -1896,8 +1908,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GPSManager: {fileID: 1447643464}
   terrain: {fileID: 0}
-  mainCamera: {fileID: 963194227}
   TerrainProyectionObj: {fileID: 785761512}
+  camera: {fileID: 1316843604}
 --- !u!4 &785761514
 Transform:
   m_ObjectHideFlags: 0
@@ -4719,6 +4731,7 @@ MonoBehaviour:
     lng: 0
   camera: {fileID: 1316843604}
   objetos: []
+  BackButton: {fileID: 458258617}
 --- !u!224 &1447643466
 RectTransform:
   m_ObjectHideFlags: 0

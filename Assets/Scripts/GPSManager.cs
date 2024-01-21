@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 
 public class GPSManager : MonoBehaviour {
@@ -7,10 +8,14 @@ public class GPSManager : MonoBehaviour {
     static readonly double R = 6371.0; // Radius of the earth in km
     static readonly double pi_sobre_180 = Math.PI / 180.0;
 
-    new public GameObject camera;
+    public GameObject camera;
     public GameObject[] objetos;
+    public Button BackButton;
 
     public void InitializeGPSManager() {
+        BackButton.onClick.AddListener(() => StopCoroutine(StartGPS()));
+        BackButton.onClick.AddListener(() => CancelInvoke("UpdateCamaraPosition"));
+        BackButton.onClick.AddListener(() => Destroy(objetos[0]));
         StartCoroutine(StartGPS());
     }
     // Start is called before the first frame update
@@ -67,8 +72,9 @@ public class GPSManager : MonoBehaviour {
 
     private void SetPositionTerrain() {
 
-        for(int i = 0; i < objetos.Length; i++)
-        {
+        for(int i = 0; i < objetos.Length; i++) {
+            Location loc = objetos[i].GetComponent<LocationComponent>().location;
+            Debug.Log("TERRAIN POSITION: " + loc.lat + " , " + loc.lng);
             Vector3 nuevaPosicion = DistanceToOrigin(objetos[i].GetComponent<LocationComponent>().location);
             nuevaPosicion.y = TerrainProyectionEventManager.instance.lowestElevation;
             objetos[i].transform.position = nuevaPosicion;
