@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class TerrainController : MonoBehaviour {
 
-    public GameObject terrainObject;
+    public GameObject terrainCanvas;
     public GameObject importedObject;
     public int terrainSize;
     public float terrainHeightDifference;
@@ -15,7 +15,7 @@ public class TerrainController : MonoBehaviour {
         DisableTerrain();
         ExtractTerrainData(fileName);
 
-        terrainObject = GameObject.Find("TerrainObject");
+        terrainCanvas = GameObject.Find("TerrainCanvas");
         importedObject = new OBJLoader().Load(fileName,null);
 
         Texture2D texture = Resources.Load<Texture2D>("TerrainTexture");
@@ -37,22 +37,23 @@ public class TerrainController : MonoBehaviour {
         meshRenderer.material = newMaterial;
         if (importedObject != null) {
             Debug.Log("importado");
-            importedObject.transform.position = new Vector3(940, 0, 12000);;
+            importedObject.transform.position = new Vector3(940, 0, 4325);;
 
             // Ajusta la posición del objeto padre a la posición fija
             //tObject.transform.position = new Vector3(516, 266.5f, 67);
 
             // Establece el objeto hijo como hijo del objeto padre
-            importedObject.transform.parent = terrainObject.transform;
+            importedObject.transform.parent = terrainCanvas.transform;
         } else {
             Debug.LogError("Error loading the .obj file");
         }
+
+        importedObject.AddComponent<ObjectViewer>();
     }
 
     public void OnDeleteTerrainOnClick() {
-        if (terrainObject.transform.childCount > 0) {
 
-            Transform importedTransform = terrainObject.transform.GetChild(0);
+            Transform importedTransform = importedObject.transform;
 
             if (importedTransform!= null && importedTransform.gameObject != null) {
                 //Debug.Log("Deleting object: " + imported.name); // Debug statement
@@ -62,7 +63,6 @@ public class TerrainController : MonoBehaviour {
             else {
                 Debug.LogWarning("Imported object is null or already destroyed.");
             }
-        }
     }
 
     private void DisableTerrain() {
