@@ -40,8 +40,7 @@ public class WebMapView : MonoBehaviour {
     void WebCoroutine() {
 
         webViewObject.Init(
-            cb: (msg) =>
-            {
+            cb: (msg) => {
                 if (msg is string) {
                     if (msg == "Proyect") {
                         RetrieveSelectedPosition();
@@ -71,7 +70,7 @@ public class WebMapView : MonoBehaviour {
             },
             ld: (msg) => {
                 // Call the JavaScript function to initialize the map
-                int terrainSize = TerrainProyectionEventManager.instance.terrainSize;
+                int terrainSize = ADDTerrainButton ? 0 : TerrainProyectionEventManager.instance.terrainSize;
                 double lat = TerrainProyectionEventManager.instance.location.lat;
                 double lng = TerrainProyectionEventManager.instance.location.lng;
                 Debug.Log(terrainSize + " , " + lat + " , " + lng);
@@ -117,7 +116,6 @@ public class WebMapView : MonoBehaviour {
     void GetSelectedPosition() {
 
         // Use lat and lng in Unity as needed
-        //Debug.Log($"Selected Position - Latitude: {selectedLocation.lat}, Longitude: {selectedLocation.lng}");
 
         TerrainProyectionEventManager.instance.InvokeCoordinatesReceived(selectedLocation);
         if(ADDTerrainButton) {

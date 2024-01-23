@@ -60,6 +60,10 @@
                 google.maps.event.addListener(map, 'click', function (event) {
                     changeMarker(event.latLng);
                 });
+
+                google.maps.event.addListener(marker, 'dragend', function () {
+                    changeMarker(marker.getPosition());
+                });
             }
 
              function handleLocationError(hasGeolocation, fallbackPosition) {
@@ -68,6 +72,10 @@
 
                 google.maps.event.addListener(map, 'click', function (event) {
                     changeMarker(event.latLng);
+                });
+
+                 google.maps.event.addListener(marker, 'dragend', function () {
+                    changeMarker(marker.getPosition());
                 });
             }
 
@@ -109,15 +117,9 @@
         }
 
         function changeMarker(location) {
-            if (marker) {
-                    marker.setMap(null);
-                }
+            marker.setPosition(location);
 
-            marker = new google.maps.Marker({
-                position: location,
-                map: map,
-                draggable: true
-            });
+            map.setCenter(location);
 
             circle.setCenter(marker.getPosition());
             getSelectedPosition();
