@@ -20,18 +20,20 @@ public class TerrainProyection : MonoBehaviour {
     terrain = new OBJLoader().Load(fileName,null);
 
     Texture2D texture = Resources.Load<Texture2D>("TerrainTexture");
-    if (texture == null) {
-        Debug.Log("Failed to load texture at path: ");
-    }
-    Material newMaterial = new(Shader.Find("Standard (Specular setup)")) {
-        mainTexture = texture
-    }; // You can choose a different shader if needed
+    
+
+     Shader doubleSidedShader = Shader.Find("Standard-DoubleSided");
+
+    // Create a new material using the custom shader
+    Material newMaterial = new Material(doubleSidedShader);
+    newMaterial.mainTexture = texture;
+
 
     // Get or add a MeshRenderer component
     if (!terrain.transform.GetChild(0).TryGetComponent<MeshRenderer>(out var meshRenderer)) {
-    // If MeshRenderer doesn't exist, add one
-    meshRenderer = terrain.transform.GetChild(0).gameObject.AddComponent<MeshRenderer>();
-    }   
+        // If MeshRenderer doesn't exist, add one
+        meshRenderer = terrain.transform.GetChild(0).gameObject.AddComponent<MeshRenderer>();
+        }   
 
     // Assign the material to the object's renderer
     meshRenderer.material = newMaterial;

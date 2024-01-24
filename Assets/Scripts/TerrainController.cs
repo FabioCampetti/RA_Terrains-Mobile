@@ -22,25 +22,25 @@ public class TerrainController : MonoBehaviour {
         if (texture == null) {
             Debug.Log("Failed to load texture at path: ");
         }
+        
+        Shader doubleSidedShader = Shader.Find("Standard-DoubleSided");
 
-        Material newMaterial = new(Shader.Find("Standard (Specular setup)")) {
-            mainTexture = texture
-        };
+        // Create a new material using the custom shader
+        Material newMaterial = new Material(doubleSidedShader);
+        newMaterial.mainTexture = texture;
 
         // Get or add a MeshRenderer component
-        if (!importedObject.transform.GetChild(0).TryGetComponent<MeshRenderer>(out var meshRenderer)) {
+        MeshRenderer meshRenderer = importedObject.GetComponentInChildren<MeshRenderer>();
+        if (meshRenderer == null) {
             // If MeshRenderer doesn't exist, add one
-            meshRenderer = importedObject.transform.GetChild(0).gameObject.AddComponent<MeshRenderer>();
+            meshRenderer = importedObject.AddComponent<MeshRenderer>();
         }
 
         // Assign the material to the object's renderer
         meshRenderer.material = newMaterial;
-        if (importedObject != null) {
-            Debug.Log("importado");
-            importedObject.transform.position = new Vector3(940, 0, 4325);;
 
-            // Ajusta la posición del objeto padre a la posición fija
-            //tObject.transform.position = new Vector3(516, 266.5f, 67);
+        if (importedObject != null) {
+             importedObject.transform.position = new Vector3(940, 0, 4325);;
 
             // Establece el objeto hijo como hijo del objeto padre
             importedObject.transform.parent = terrainCanvas.transform;
@@ -53,17 +53,17 @@ public class TerrainController : MonoBehaviour {
 
     public void OnDeleteTerrainOnClick() {
 
-            Transform importedTransform = importedObject.transform;
+        Transform importedTransform = terrainCanvas.transform.GetChild(2);
 
-            if (importedTransform!= null && importedTransform.gameObject != null) {
+        if (importedTransform!= null && importedTransform.gameObject != null) {
                 //Debug.Log("Deleting object: " + imported.name); // Debug statement
-                DestroyImmediate(importedTransform.gameObject);
-                Debug.Log("Object deleted");
-            }
-            else {
-                Debug.LogWarning("Imported object is null or already destroyed.");
-            }
-    }
+            DestroyImmediate(importedTransform.gameObject);
+            Debug.Log("Object deleted");
+        }
+        else {
+            Debug.LogWarning("Imported object is null or already destroyed.");
+        }
+   }   
 
     private void DisableTerrain() {
         Terrain terrain = GameObject.Find("Terrain").GetComponent<Terrain>();
