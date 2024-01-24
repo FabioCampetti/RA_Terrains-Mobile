@@ -73,8 +73,8 @@ public class WebMapView : MonoBehaviour {
                 int terrainSize = ADDTerrainButton ? 0 : TerrainProyectionEventManager.instance.terrainSize;
                 double lat = TerrainProyectionEventManager.instance.location.lat;
                 double lng = TerrainProyectionEventManager.instance.location.lng;
-                Debug.Log(terrainSize + " , " + lat + " , " + lng);
-                webViewObject.EvaluateJS($"initMap({terrainSize}," + $"{lat}," + $"{lng});");
+                int isTerrainProyection = ADDTerrainButton ? 0 : 1;
+                webViewObject.EvaluateJS($"initMap({terrainSize}," + $"{lat}," + $"{lng}," + $"{isTerrainProyection});");
             }
         );
 
