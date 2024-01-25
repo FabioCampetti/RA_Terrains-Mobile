@@ -37,10 +37,11 @@ public class TerrainController : MonoBehaviour {
         }
 
         // Assign the material to the object's renderer
-        meshRenderer.material = newMaterial;
+        meshRenderer.material = newMaterial;        
 
         if (importedObject != null) {
-             importedObject.transform.position = new Vector3(940, 0, 4325);;
+            float terrainHeightDifference = TerrainProyectionEventManager.instance.lowestElevation - TerrainProyectionEventManager.instance.highestElevation;
+            importedObject.transform.position = new Vector3(940, terrainHeightDifference, TerrainProyectionEventManager.instance.terrainSize);
 
             // Establece el objeto hijo como hijo del objeto padre
             importedObject.transform.parent = terrainCanvas.transform;

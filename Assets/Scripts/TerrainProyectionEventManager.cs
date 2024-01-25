@@ -13,6 +13,8 @@ public class TerrainProyectionEventManager : MonoBehaviour {
 
     public float lowestElevation;
 
+    public float highestElevation;
+
     private void Awake() {
         if (instance != null && instance != this){
 

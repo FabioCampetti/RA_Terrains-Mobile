@@ -32,9 +32,10 @@ public class FileLoader : MonoBehaviour {
                 // Get the selected file path
                 filePath = paths[0];
 
+                ExtractTerrainData(filePath);
+
                 if (isProjection) {
                     TerrainProyectionEventManager.instance.InvokeFileLoaded(filePath);
-                    ExtractTerrainData(filePath);
                     GameManager.instance.TerrainPositionMenu();
                 } else {
                     gameObject.AddComponent<TerrainController>().LoadAndAddObject(filePath);
@@ -55,6 +56,7 @@ public class FileLoader : MonoBehaviour {
 
                 int terrainSize = 0;
                 float lowestElevation = 0f;
+                float highestElevation = 0f;
                 Location location = null;
                 // Read lines until you find the necessary information or reach the end of the file
                 while (!reader.EndOfStream) {
@@ -69,6 +71,9 @@ public class FileLoader : MonoBehaviour {
                             case "# Size":
                                 terrainSize = int.Parse(value);
                                 break;
+                            case "# Highest Elevation":
+                                highestElevation = float.Parse(value);
+                                break;
                             case "# Lowest Elevation":
                                 lowestElevation = float.Parse(value);
                                 break;
@@ -80,8 +85,9 @@ public class FileLoader : MonoBehaviour {
                     }
 
                     // Exit the loop if you have extracted all necessary information
-                    if (terrainSize != 0 && lowestElevation != 0 && location != null) {
+                    if (terrainSize != 0 && highestElevation !=0 && lowestElevation != 0 && location != null) {
                         TerrainProyectionEventManager.instance.InvokeTerrainSizeReceived(terrainSize);
+                        TerrainProyectionEventManager.instance.highestElevation = highestElevation;
                         TerrainProyectionEventManager.instance.InvokeLowestElevationReceived(lowestElevation);
                         TerrainProyectionEventManager.instance.InvokeCoordinatesReceived(location);
                         break;
