@@ -12,7 +12,7 @@ public class TerrainProyection : MonoBehaviour {
 
     public void LoadTerrain() {
 
-    string fileName = TerrainProyectionEventManager.instance.filePath;
+    string fileName = TerrainInfo.instance.filePath;
 
     GPSManager = GameObject.Find("GPSManager");
     TerrainProyectionObj = GameObject.Find("TerrainProyection");
@@ -46,7 +46,7 @@ public class TerrainProyection : MonoBehaviour {
 
     // Assign the mesh to the MeshCollider
     meshCollider.sharedMesh = mesh;
-    Location location = new Location(TerrainProyectionEventManager.instance.location.lat, TerrainProyectionEventManager.instance.location.lng);
+    Location location = new Location(TerrainInfo.instance.location.lat, TerrainInfo.instance.location.lng);
     LocationComponent locationComponent = terrain.AddComponent<LocationComponent>();
     locationComponent.location = location;
     GPSManager GPSManagerScript = GPSManager.GetComponent<GPSManager>();

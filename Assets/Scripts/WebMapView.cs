@@ -70,9 +70,9 @@ public class WebMapView : MonoBehaviour {
             },
             ld: (msg) => {
                 // Call the JavaScript function to initialize the map
-                int terrainSize = ADDTerrainButton ? 0 : TerrainProyectionEventManager.instance.terrainSize;
-                double lat = TerrainProyectionEventManager.instance.location.lat;
-                double lng = TerrainProyectionEventManager.instance.location.lng;
+                int terrainSize = ADDTerrainButton ? 0 : TerrainInfo.instance.terrainSize;
+                double lat = TerrainInfo.instance.location.lat;
+                double lng = TerrainInfo.instance.location.lng;
                 int isTerrainProyection = ADDTerrainButton ? 0 : 1;
                 webViewObject.EvaluateJS($"initMap({terrainSize}," + $"{lat}," + $"{lng}," + $"{isTerrainProyection});");
             }
@@ -117,7 +117,7 @@ public class WebMapView : MonoBehaviour {
 
         // Use lat and lng in Unity as needed
 
-        TerrainProyectionEventManager.instance.InvokeCoordinatesReceived(selectedLocation);
+        TerrainInfo.instance.location = selectedLocation;
         if(ADDTerrainButton) {
             terrainSizeInputField.onValueChanged.RemoveAllListeners();
             gameObject.GetComponent<TerrainMenuManager>().OnGenerateTerrainButtonClick();

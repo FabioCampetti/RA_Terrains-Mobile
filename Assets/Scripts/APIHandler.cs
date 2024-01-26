@@ -66,8 +66,7 @@ public static class APIHandler {
 }
 
 [System.Serializable]
-public class ElevationResponse
-{
+public class ElevationResponse {
     public ElevationResult[] results;
     public string status;
 }

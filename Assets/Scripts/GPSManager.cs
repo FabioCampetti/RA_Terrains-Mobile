@@ -74,9 +74,9 @@ public class GPSManager : MonoBehaviour {
 
         for(int i = 0; i < objetos.Length; i++) {
             Location loc = objetos[i].GetComponent<LocationComponent>().location;
-            Debug.Log("TERRAIN POSITION: " + loc.lat + " , " + loc.lng);
             Vector3 nuevaPosicion = DistanceToOrigin(objetos[i].GetComponent<LocationComponent>().location);
-            nuevaPosicion.y = TerrainProyectionEventManager.instance.lowestElevation;
+            nuevaPosicion.y = TerrainInfo.instance.lowestElevation;
+            Debug.Log("Terrain Heigth: " + TerrainInfo.instance.lowestElevation);
             objetos[i].transform.position = nuevaPosicion;
         }
     }
@@ -95,7 +95,7 @@ public class GPSManager : MonoBehaviour {
     }
 
     private bool isInTerrainRange(Vector2 cameraPosition, Vector2 terrainPosition) {
-        int halfTerrainSize = TerrainProyectionEventManager.instance.terrainSize/2;
+        int halfTerrainSize = TerrainInfo.instance.terrainSize/2;
         return (cameraPosition.x >= terrainPosition.x - halfTerrainSize) &&
                (cameraPosition.x <= terrainPosition.x + halfTerrainSize) &&
                (cameraPosition.y >= terrainPosition.y - halfTerrainSize) &&
@@ -120,7 +120,7 @@ public class GPSManager : MonoBehaviour {
 
     private Vector3 GetPositionHeight(Vector2 position) {
 
-        Vector3 initialPosition = new Vector3(position.x, 10000f, position.y);
+        Vector3 initialPosition = new Vector3(position.x, 20000f, position.y);
 
         Ray ray = new Ray(initialPosition, Vector3.down);
 

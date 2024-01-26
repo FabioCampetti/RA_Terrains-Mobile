@@ -9,21 +9,12 @@ using System.Text;
 enum SaveFormat { Triangles, Quads }
 enum SaveResolution { Full=0, Half, Quarter, Eighth, Sixteenth }
  
-class ExportTerrain {
-   SaveFormat saveFormat = SaveFormat.Triangles;
-   SaveResolution saveResolution = SaveResolution.Half;
+public static class ExportTerrain {
  
-   public TerrainData terrainData;
-   public Vector3 terrainPos;
- 
-   public ExportTerrain(Terrain terrain) {
-         terrainData = terrain.terrainData;
-         terrainPos = terrain.transform.position;
-      }
-   
- 
-   public string Export(string file, float lowestElevation, int resolution, Location location) {
+   public static void Export(TerrainData terrainData, Vector3 terrainPos, string file) {
 
+      SaveFormat saveFormat = SaveFormat.Triangles;
+      SaveResolution saveResolution = SaveResolution.Half;
       string fileName = Application.persistentDataPath + $"/TerrainObjects/{file}.obj";
       int w = terrainData.heightmapResolution;
       int h = terrainData.heightmapResolution;
@@ -112,9 +103,9 @@ class ExportTerrain {
          sw.WriteLine("# Unity terrainData OBJ File");
          sw.WriteLine("# Size:" + terrainData.size.x);
          sw.WriteLine("# Highest Elevation:" + terrainData.size.y);
-         sw.WriteLine("# Lowest Elevation:" + lowestElevation);
-         sw.WriteLine("# Resolution:" + resolution);
-         sw.WriteLine("# Location:" + location.lat + "," + location.lng);
+         sw.WriteLine("# Lowest Elevation:" + TerrainInfo.instance.lowestElevation);
+         sw.WriteLine("# Resolution:" + TerrainInfo.instance.resolution);
+         sw.WriteLine("# Location:" + TerrainInfo.instance.location.lat + "," + TerrainInfo.instance.location.lng);
          // Write vertices
          System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
          for (int i = 0; i < tVertices.Length; i++)
@@ -167,8 +158,6 @@ class ExportTerrain {
       }
       sw.Close();
       terrainData = null;
-
-      return fileName;
    }
 
 }

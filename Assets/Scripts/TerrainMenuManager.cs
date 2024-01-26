@@ -11,7 +11,6 @@ public class TerrainMenuManager : MonoBehaviour {
 
     // Start is called before the first frame update
     void OnEnable() {
-        Debug.Log("TERRAIN MENU MANAGER STARTED");
         terrainSizeInputField = transform.Find("TerrainSize").GetComponent<TMP_InputField>();
         fileNameInputField = transform.Find("File").GetComponent<TMP_InputField>();
         dropdown = transform.Find("Dropdown").GetComponent<TMP_Dropdown>();
@@ -20,22 +19,18 @@ public class TerrainMenuManager : MonoBehaviour {
     public void OnGenerateTerrainButtonClick() {
 
 
-    int terrainSize = int.Parse(terrainSizeInputField.text);
+    TerrainInfo.instance.terrainSize = int.Parse(terrainSizeInputField.text);
     terrainSizeInputField.text = "0";
 
-    int heightmapResolution = int.Parse(dropdown.options[dropdown.value].text);
+    TerrainInfo.instance.resolution = int.Parse(dropdown.options[dropdown.value].text);
 
     string fileName = fileNameInputField.text;
     fileNameInputField.text = string.Empty;
 
     GameManager.instance.Terrain();
 
-    TerrainElevationGeneration terrainManager = new TerrainElevationGeneration(TerrainProyectionEventManager.instance.location, terrainSize, heightmapResolution, fileName);
+    TerrainElevationGeneration.GenerateTerrain(fileName);
 
-    terrainManager.generateElevations();
-    terrainManager.generateTerrain();
-    terrainManager.ExportTerrain();
-
-    new TerrainController().LoadAndAddObject(Application.persistentDataPath + $"/TerrainObjects/{terrainManager.fileName}.obj");
+    new TerrainController().LoadAndAddObject(Application.persistentDataPath + $"/TerrainObjects/{fileName}.obj");
     }
 }

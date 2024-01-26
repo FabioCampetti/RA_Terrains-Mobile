@@ -22,7 +22,7 @@ public static class CSVHandler {
         writer.Close();
     }
 
-    public static TerrainElevationData ReadCSV(string fileName, int terrainResolution) {
+    public static ElevationResult[,] ReadCSV(string fileName, int terrainResolution) {
 
         ElevationResult[,] elevationResults = new ElevationResult[terrainResolution, terrainResolution];
         double highestElevation = double.MaxValue * -1;
@@ -51,7 +51,10 @@ public static class CSVHandler {
 
         reader.Close();
 
-        return new TerrainElevationData(highestElevation, lowestElevation, elevationResults);
+        TerrainInfo.instance.highestElevation = (float) highestElevation;
+        TerrainInfo.instance.lowestElevation = (float) lowestElevation;
+
+        return elevationResults;
     }
 
     public static string getSavedElevationsFileName(Location location, int heightmapResolution, int terrainSize) {

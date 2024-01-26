@@ -13,7 +13,6 @@ public class TerrainController : MonoBehaviour {
     public void LoadAndAddObject(string fileName) {
 
         DisableTerrain();
-        ExtractTerrainData(fileName);
 
         terrainCanvas = GameObject.Find("TerrainCanvas");
         importedObject = new OBJLoader().Load(fileName,null);
@@ -40,8 +39,8 @@ public class TerrainController : MonoBehaviour {
         meshRenderer.material = newMaterial;        
 
         if (importedObject != null) {
-            float terrainHeightDifference = TerrainProyectionEventManager.instance.lowestElevation - TerrainProyectionEventManager.instance.highestElevation;
-            importedObject.transform.position = new Vector3(940, terrainHeightDifference, TerrainProyectionEventManager.instance.terrainSize);
+            float terrainHeightDifference = TerrainInfo.instance.lowestElevation - TerrainInfo.instance.highestElevation;
+            importedObject.transform.position = new Vector3(940, terrainHeightDifference, TerrainInfo.instance.terrainSize);
 
             // Establece el objeto hijo como hijo del objeto padre
             importedObject.transform.parent = terrainCanvas.transform;
@@ -69,49 +68,5 @@ public class TerrainController : MonoBehaviour {
     private void DisableTerrain() {
         Terrain terrain = GameObject.Find("Terrain").GetComponent<Terrain>();
         terrain.enabled = false;
-    }
-
-    private  void ExtractTerrainData(string filePath) {
-        try {
-            // Open the file with a StreamReader
-            using (StreamReader reader = new StreamReader(filePath)) {
-                // Initialize variables to store extracted values
-                terrainSize = 0;
-                float highestElevation = 0f;
-                float lowestElevation = 0f;
-                int resolution = 0;
-
-                // Read lines until you find the necessary information or reach the end of the file
-                while (!reader.EndOfStream) {
-                    string line = reader.ReadLine();
-                    string[] tokens = line.Split(':');
-
-                    if (tokens.Length >= 2) {
-                        string key = tokens[0].Trim();
-                        string value = tokens[1].Trim();
-
-                        switch (key) {
-                            case "Size":
-                                terrainSize = int.Parse(value);
-                                break;
-                            case "Highest Elevation":
-                                highestElevation = float.Parse(value);
-                                break;
-                            case "Lowest Elevation":
-                                lowestElevation = float.Parse(value);
-                                break;
-                        }
-                    }
-
-                    // Exit the loop if you have extracted all necessary information
-                    if (terrainSize != 0 && highestElevation != 0 && lowestElevation != 0) {
-                        terrainHeightDifference = highestElevation - lowestElevation;
-                        break;
-                    }
-                }
-            }
-        } catch (Exception e) {
-                Debug.LogError($"Error reading file: {e.Message}");
-            }
     }
 }
