@@ -19,7 +19,8 @@ public static class TerrainElevationGeneration {
 
     private static Terrain generateTerrain(string csvFileName) {
 
-        Terrain terrain = GameObject.Find("Terrain").GetComponent<Terrain>();
+        Terrain terrain = new GameObject("Terrain").AddComponent<Terrain>();
+        terrain.transform.parent = GameObject.Find("TerrainCanvas").transform;
 
         TerrainData terrainData = terrain.terrainData;
 

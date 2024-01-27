@@ -32,7 +32,9 @@ public class WebMapView : MonoBehaviour {
             terrainSizeInputField.onValueChanged.AddListener(UpdateRatius);
         }
 
-        webViewObject = GameObject.Find("WebViewObject").AddComponent<WebViewObject>();
+        GameObject canvas = GameObject.Find("TerrainMenuCanvas") ?? GameObject.Find("TerrainPositionCanvas");
+        webViewObject = (new GameObject("WebViewObject")).AddComponent<WebViewObject>();
+        webViewObject.transform.SetParent(canvas.transform);
         WebCoroutine();
     }
 
@@ -103,13 +105,7 @@ public class WebMapView : MonoBehaviour {
     }
 
     void DeactivateWebView() {
-        // Hide the WebView
-        webViewObject.SetVisibility(false);
-
-        // Destroy the WebViewObject
-        if (webViewObject != null) {
-            webViewObject = null;
-        }
+        Destroy(webViewObject);
     }
 
     // Callback method to be called from JavaScript

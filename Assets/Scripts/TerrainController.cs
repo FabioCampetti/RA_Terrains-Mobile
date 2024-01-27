@@ -53,7 +53,7 @@ public class TerrainController : MonoBehaviour {
 
     public void OnDeleteTerrainOnClick() {
 
-        Transform importedTransform = terrainCanvas.transform.GetChild(2);
+        Transform importedTransform = terrainCanvas.transform.GetChild(1);
 
         if (importedTransform!= null && importedTransform.gameObject != null) {
                 //Debug.Log("Deleting object: " + imported.name); // Debug statement
@@ -66,7 +66,6 @@ public class TerrainController : MonoBehaviour {
    }   
 
     private void DisableTerrain() {
-        Terrain terrain = GameObject.Find("Terrain").GetComponent<Terrain>();
-        terrain.enabled = false;
+        Destroy(GameObject.Find("Terrain"));
     }
 }
