@@ -2,13 +2,23 @@ using Dummiesman;
 using System;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TerrainController : MonoBehaviour {
 
     public GameObject terrainCanvas;
     public GameObject importedObject;
-    public int terrainSize;
-    public float terrainHeightDifference;
+
+    public Button upButton;
+    public Button downButton;
+    public Button leftButton;
+    public Button rightButton;
+    void Start() {
+        upButton.onClick.AddListener(() => MoveTerrain(new Vector3(0,100,0)));
+        downButton.onClick.AddListener(() => MoveTerrain(new Vector3(0,-100,0)));
+        leftButton.onClick.AddListener(() => MoveTerrain(new Vector3(-100,0,0)));
+        rightButton.onClick.AddListener(() => MoveTerrain(new Vector3(100,0,0)));
+    }
 
     public void LoadAndAddObject(string fileName) {
 
@@ -53,7 +63,7 @@ public class TerrainController : MonoBehaviour {
 
     public void OnDeleteTerrainOnClick() {
 
-        Transform importedTransform = terrainCanvas.transform.GetChild(1);
+        Transform importedTransform = terrainCanvas.transform.GetChild(5);
 
         if (importedTransform!= null && importedTransform.gameObject != null) {
                 //Debug.Log("Deleting object: " + imported.name); // Debug statement
@@ -67,5 +77,10 @@ public class TerrainController : MonoBehaviour {
 
     private void DisableTerrain() {
         Destroy(GameObject.Find("Terrain"));
+    }
+
+    private void MoveTerrain(Vector3 direction) {
+        Transform importedTransform = terrainCanvas.transform.GetChild(5);
+        importedTransform.position += direction;
     }
 }
