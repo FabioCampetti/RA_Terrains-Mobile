@@ -6,11 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Map</title>
     <style>
-        /* Added CSS to make the button bigger */
-        button {
-            font-size: 1.5em;
-            padding: 10px 20px;
-        }
+        .custom-button {
+        font-size: 1em;
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .red-button {
+        background-color: red;
+        color: white;
+        float: left;
+    }
+
+    .blue-button {
+        background-color: blue;
+        color: white;
+        float: center;
+    }
+
+    .green-button {
+        background-color: green;
+        color: white;
+        float: right;
+    }
+
+     /* Added CSS to make the button bigger */
+    button {
+        font-size: 1.5em;
+        padding: 10px 20px;
+    }
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
     <script>
@@ -19,8 +46,11 @@
         let circle;
         let originalPosition;
         let initialPosition;
+        let isProyecting;
 
-        function initMap(terrainSize, originalLat, originalLng) {
+        function initMap(terrainSize, originalLat, originalLng, isProyection) {
+
+            isProyecting = isProyection;
 
             originalPosition = {
                 lat: originalLat,
@@ -30,7 +60,7 @@
             function createMap(centerPosition) {
                 return new google.maps.Map(document.getElementById('map'), {
                     center: centerPosition,
-                    zoom: 14
+                    zoom: 12
                 });
             }
 
@@ -88,12 +118,14 @@
 
                     setupMapAndMarker(initialPosition);
                     getSelectedPosition();
+                    createButtons();
                 }, function () {
                         handleLocationError(true, map.getCenter());
                     });
             } else {
                 // Browser doesn't support Geolocation
                 handleLocationError(false, map.getCenter());
+                createButtons();
             }
         }
 
@@ -125,16 +157,55 @@
             getSelectedPosition();
         }
 
+        function createButtons() {
+             // Remove existing buttons with the specified class
+            document.querySelectorAll(".custom-button").forEach(button => {
+                button.parentNode.removeChild(button);
+            });
+
+            if (isProyecting) {
+                const backButton = createButton("Back", "red-button", function () {
+                    Unity.call('Back');
+                });
+                document.body.appendChild(backButton);
+
+                const userPositionButton = createButton("User Position", "blue-button", function () {
+                    changeMarker(initialPosition);
+                });
+                document.body.appendChild(userPositionButton);
+
+                const terrainOriginalPositionButton = createButton("Terrain Original Position", "blue-button", function () {
+                    changeMarker(originalPosition);
+                });
+                document.body.appendChild(terrainOriginalPositionButton);
+
+                const proyectTerrainButton = createButton("Proyect Terrain", "green-button", function () {
+                    Unity.call('Proyect');
+                });
+                document.body.appendChild(proyectTerrainButton);
+
+                // Set the height of the map based on isProyecting
+                document.getElementById('map').style.height = '85vh';
+            } else {
+                // Set the height of the map based on isProyecting
+                document.getElementById('map').style.height = '100vh';
+            }
+
+            function createButton(text, className, onClickHandler) {
+                const button = document.createElement("button");
+                button.textContent = text;
+                button.className = "custom-button " + className; // Add custom-button class and specific className
+                button.onclick = onClickHandler;
+                return button;
+            }
+        }
+    </script>
+
     </script>
 </head>
 
 <body>
-    <div id="map" style="height: 100vh;"></div>
-
-    <!-- Added button to execute getSelectedPosition() function -->
-    <button onclick="changeMarker(initialPosition)">User Position</button>
-    <button onclick="changeMarker(originalPosition)">Terrain Original Position</button>
-    <button onclick="Unity.call('Proyect')">Proyect Terrain</button>
+    <div id="map"></div>
 </body>
 
 </html>

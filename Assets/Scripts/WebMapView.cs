@@ -46,13 +46,16 @@ public class WebMapView : MonoBehaviour {
                 if (msg is string) {
                     if (msg == "Proyect") {
                         RetrieveSelectedPosition();
-                    } else {
-                        double lat, lng;
-                        string[] coordinates = msg.Split(',');
-                        if (coordinates.Length == 2 && double.TryParse(coordinates[0], out lat) && double.TryParse(coordinates[1], out lng)) {
-                            selectedLocation = new Location(lat,lng);
+                    } else if (msg == "Back") {
+                        DeactivateWebView();
+                        GameManager.instance.MainMenu();
+                        } else {
+                            double lat, lng;
+                            string[] coordinates = msg.Split(',');
+                            if (coordinates.Length == 2 && double.TryParse(coordinates[0], out lat) && double.TryParse(coordinates[1], out lng)) {
+                                selectedLocation = new Location(lat,lng);
+                            }
                         }
-                    }
                 }
             },
             err: (msg) => {
@@ -84,7 +87,7 @@ public class WebMapView : MonoBehaviour {
 
         // Set the margins and visibility of the WebView
         if(ADDTerrainButton) {
-             webViewObject.SetMargins(5, 0, 0, Screen.height / 2);
+             webViewObject.SetMargins(0, 0, 0, Screen.height / 2);
         } else {
             webViewObject.SetMargins(0,0,0,0);
         }

@@ -13,11 +13,12 @@ public class TerrainController : MonoBehaviour {
     public Button downButton;
     public Button leftButton;
     public Button rightButton;
-    void Start() {
+
+    void OnEnable() {
         upButton.onClick.AddListener(() => MoveTerrain(new Vector3(0,100,0)));
         downButton.onClick.AddListener(() => MoveTerrain(new Vector3(0,-100,0)));
         leftButton.onClick.AddListener(() => MoveTerrain(new Vector3(-100,0,0)));
-        rightButton.onClick.AddListener(() => MoveTerrain(new Vector3(100,0,0)));
+        rightButton.onClick.AddListener(() => MoveTerrain(new Vector3(100,0,0)));   
     }
 
     public void LoadAndAddObject(string fileName) {
@@ -73,6 +74,7 @@ public class TerrainController : MonoBehaviour {
         else {
             Debug.LogWarning("Imported object is null or already destroyed.");
         }
+        Camera.main.fieldOfView = 60;
    }   
 
     private void DisableTerrain() {
