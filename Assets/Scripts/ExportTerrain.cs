@@ -16,6 +16,7 @@ public static class ExportTerrain {
       SaveFormat saveFormat = SaveFormat.Triangles;
       SaveResolution saveResolution = SaveResolution.Half;
       string fileName = Application.persistentDataPath + $"/TerrainObjects/{file}.obj";
+      TerrainInfo.instance.filePath = fileName;
       int w = terrainData.heightmapResolution;
       int h = terrainData.heightmapResolution;
       Vector3 meshScale = terrainData.size;

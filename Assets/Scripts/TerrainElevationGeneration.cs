@@ -21,8 +21,7 @@ public static class TerrainElevationGeneration {
 
         Terrain terrain = new GameObject("Terrain").AddComponent<Terrain>();
         terrain.transform.parent = GameObject.Find("TerrainCanvas").transform;
-
-        TerrainData terrainData = terrain.terrainData;
+        TerrainData terrainData = new TerrainData();
 
         int resolution = TerrainInfo.instance.resolution < 513 ? TerrainInfo.instance.resolution : TerrainInfo.instance.resolution - 1;
 
@@ -34,7 +33,8 @@ public static class TerrainElevationGeneration {
         terrainData.size = new Vector3(TerrainInfo.instance.terrainSize, highestElevation, TerrainInfo.instance.terrainSize);
 
         terrainData.SetHeights(0, 0, calculateHeigths(elevationResults));
-
+        
+        terrain.terrainData = terrainData;
         return terrain;
     }
 

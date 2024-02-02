@@ -34,9 +34,15 @@ public class FileLoader : MonoBehaviour {
                 TerrainInfo.instance.FillTerrainData(filePath);
 
                 if (isProjection) {
-                    GameManager.instance.TerrainPositionMenu();
+                    if (Application.internetReachability == NetworkReachability.NotReachable) {
+                        GameManager.instance.DesactivateCamera();
+                        GameManager.instance.TerrainProyectionMenu();
+                        gameObject.AddComponent<TerrainProyection>().LoadTerrain();
+                    } else {
+                        GameManager.instance.TerrainPositionMenu();
+                    }
                 } else {
-                    gameObject.AddComponent<TerrainController>().LoadAndAddObject(filePath);
+                    GameManager.instance.Terrain();
                 }
             }
         },

@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TerrainController : MonoBehaviour {
 
@@ -14,19 +15,23 @@ public class TerrainController : MonoBehaviour {
     public Button leftButton;
     public Button rightButton;
 
+    public TMP_Text maxHeight;
+    public TMP_Text minHeight;
+
+    public TMP_Text terrainSize;
+
     void OnEnable() {
         upButton.onClick.AddListener(() => MoveTerrain(new Vector3(0,100,0)));
         downButton.onClick.AddListener(() => MoveTerrain(new Vector3(0,-100,0)));
         leftButton.onClick.AddListener(() => MoveTerrain(new Vector3(-100,0,0)));
-        rightButton.onClick.AddListener(() => MoveTerrain(new Vector3(100,0,0)));   
+        rightButton.onClick.AddListener(() => MoveTerrain(new Vector3(100,0,0)));
+        importedObject = new OBJLoader().Load(TerrainInfo.instance.filePath,null);
+        LoadAndAddObject();   
     }
 
-    public void LoadAndAddObject(string fileName) {
+    public void LoadAndAddObject() {
 
         DisableTerrain();
-
-        terrainCanvas = GameObject.Find("TerrainCanvas");
-        importedObject = new OBJLoader().Load(fileName,null);
 
         Texture2D texture = Resources.Load<Texture2D>("TerrainTexture");
         if (texture == null) {
@@ -60,11 +65,14 @@ public class TerrainController : MonoBehaviour {
         }
 
         importedObject.AddComponent<ObjectViewer>();
+        maxHeight.text = $"Max. Height {TerrainInfo.instance.highestElevation}m";
+        minHeight.text = $"Min. Height {TerrainInfo.instance.lowestElevation}m";
+        terrainSize.text = $"Terrain Size {TerrainInfo.instance.terrainSize}m";
     }
 
     public void OnDeleteTerrainOnClick() {
 
-        Transform importedTransform = terrainCanvas.transform.GetChild(5);
+        Transform importedTransform = importedObject.transform;
 
         if (importedTransform!= null && importedTransform.gameObject != null) {
                 //Debug.Log("Deleting object: " + imported.name); // Debug statement
@@ -82,7 +90,7 @@ public class TerrainController : MonoBehaviour {
     }
 
     private void MoveTerrain(Vector3 direction) {
-        Transform importedTransform = terrainCanvas.transform.GetChild(5);
+        Transform importedTransform = terrainCanvas.transform.GetChild(8);
         importedTransform.position += direction;
     }
 }

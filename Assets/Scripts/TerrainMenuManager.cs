@@ -27,10 +27,8 @@ public class TerrainMenuManager : MonoBehaviour {
     string fileName = fileNameInputField.text;
     fileNameInputField.text = string.Empty;
 
-    GameManager.instance.Terrain();
-
     TerrainElevationGeneration.GenerateTerrain(fileName);
 
-    new TerrainController().LoadAndAddObject(Application.persistentDataPath + $"/TerrainObjects/{fileName}.obj");
+    GameManager.instance.Terrain();
     }
 }
