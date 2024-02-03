@@ -21,10 +21,11 @@ public class TerrainController : MonoBehaviour {
     public TMP_Text terrainSize;
 
     void OnEnable() {
-        upButton.onClick.AddListener(() => MoveTerrain(new Vector3(0,100,0)));
-        downButton.onClick.AddListener(() => MoveTerrain(new Vector3(0,-100,0)));
-        leftButton.onClick.AddListener(() => MoveTerrain(new Vector3(-100,0,0)));
-        rightButton.onClick.AddListener(() => MoveTerrain(new Vector3(100,0,0)));
+        int scaleMovement = TerrainInfo.instance.terrainSize / 100;
+        upButton.onClick.AddListener(() => MoveTerrain(new Vector3(0,scaleMovement,0)));
+        downButton.onClick.AddListener(() => MoveTerrain(new Vector3(0,scaleMovement * -1,0)));
+        leftButton.onClick.AddListener(() => MoveTerrain(new Vector3(scaleMovement * -1,0,0)));
+        rightButton.onClick.AddListener(() => MoveTerrain(new Vector3(scaleMovement,0,0)));
         importedObject = new OBJLoader().Load(TerrainInfo.instance.filePath,null);
         LoadAndAddObject();   
     }
