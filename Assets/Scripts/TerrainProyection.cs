@@ -45,7 +45,7 @@ public class TerrainProyection : MonoBehaviour {
     MeshCollider meshCollider = terrainChild.gameObject.AddComponent<MeshCollider>();
 
     // Assign the mesh to the MeshCollider
-    meshCollider.sharedMesh = mesh;
+    meshCollider.sharedMesh = mesh;*/
     Location location = new Location(TerrainInfo.instance.location.lat, TerrainInfo.instance.location.lng);
     LocationComponent locationComponent = terrain.AddComponent<LocationComponent>();
     locationComponent.location = location;

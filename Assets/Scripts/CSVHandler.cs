@@ -8,29 +8,43 @@ public static class CSVHandler {
     private static string folderPath = Application.persistentDataPath + $"/TerrainElevations/";
     public static void WriteCSV(string fileName, ElevationResult[][] elevationData) {
 
+        double highestElevation = double.MinValue;
+        double lowestElevation = double.MaxValue;
+
         TextWriter writer  = new StreamWriter($"{folderPath}{fileName}", false);
         writer.WriteLine("Latitude, Longitude, Elevation");
         writer.Close();
  
         writer = new StreamWriter($"{folderPath}{fileName}", true);
 
-        for(int i = 0; i < elevationData.Length; i++) {
-            for(int j = 0; j < elevationData[i].Length; j++) {
-                writer.WriteLine(elevationData[i][j].ToString());
+        foreach (ElevationResult[] elevationResults in elevationData) {
+            foreach (ElevationResult elevationResult in elevationResults) {
+                writer.WriteLine(elevationResult.ToString());
+                if (elevationResult.elevation > highestElevation) {
+                    highestElevation = elevationResult.elevation;
+                }
+                if (elevationResult.elevation < lowestElevation) {
+                    lowestElevation = elevationResult.elevation;
+                }
             }
         }
+
+        TerrainInfo.instance.highestElevation = (float) highestElevation;
+        TerrainInfo.instance.lowestElevation = (float) lowestElevation;
+        
         writer.Close();
     }
 
-    public static ElevationResult[,] ReadCSV(string fileName, int terrainResolution) {
+    public static ElevationResult[][] ReadCSV(string fileName, int terrainResolution) {
 
-        ElevationResult[,] elevationResults = new ElevationResult[terrainResolution, terrainResolution];
+        ElevationResult[][] elevationsResult = new ElevationResult [terrainResolution][];
         double highestElevation = double.MaxValue * -1;
         double lowestElevation = double.MaxValue;
         
         StreamReader reader = new StreamReader($"{folderPath}{fileName}");
         string line = reader.ReadLine();
         for (int i = 0; i < terrainResolution && !reader.EndOfStream ; i++) {
+            elevationsResult[i] = new ElevationResult[terrainResolution];
             for (int j = 0; j < terrainResolution && !reader.EndOfStream; j++) {
                 
                     line = reader.ReadLine();
@@ -45,7 +59,7 @@ public static class CSVHandler {
                         lowestElevation = elevation;
                     }
 
-                    elevationResults[i,j] = new ElevationResult (elevation,new Location (double.Parse(fields[0]), double.Parse(fields[1]))); // Define la ubicación según tus necesidades.
+                    elevationsResult[i][j] = new ElevationResult (elevation,new Location (double.Parse(fields[0]), double.Parse(fields[1]))); // Define la ubicación según tus necesidades.
             }
         }
 
@@ -54,7 +68,7 @@ public static class CSVHandler {
         TerrainInfo.instance.highestElevation = (float) highestElevation;
         TerrainInfo.instance.lowestElevation = (float) lowestElevation;
 
-        return elevationResults;
+        return elevationsResult;
     }
 
     public static string getSavedElevationsFileName(Location location, int heightmapResolution, int terrainSize) {

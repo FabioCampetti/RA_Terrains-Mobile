@@ -18,28 +18,26 @@ public class WebMapView : MonoBehaviour {
 
     void OnEnable() {
 
-        ADDTerrainButton = transform.Find("ADDTerrain")?.GetComponent<Button>();
-        terrainSizeInputField = transform.Find("TerrainSize")?.GetComponent<TMP_InputField>();
-        if (ADDTerrainButton){
+        if (ADDTerrainButton != null) {
             ADDTerrainButton.onClick.AddListener(() => RetrieveSelectedPosition());
         }
-        
-        BackButton = transform.Find("Back")?.GetComponent<Button>();
-         if (BackButton){
-            BackButton.onClick.AddListener(() => DeactivateWebView());
-        }
-        if (terrainSizeInputField) {
+
+        if (terrainSizeInputField != null) {
             terrainSizeInputField.onValueChanged.AddListener(UpdateRatius);
         }
 
+        if (BackButton != null) {
+            BackButton.onClick.AddListener(() => DeactivateWebView());
+        }
+        
         GameObject canvas = GameObject.Find("TerrainMenuCanvas") ?? GameObject.Find("TerrainPositionCanvas");
         webViewObject = (new GameObject("WebViewObject")).AddComponent<WebViewObject>();
         webViewObject.transform.SetParent(canvas.transform);
-        WebCoroutine();
+        webCoroutine =  StartCoroutine(WebCoroutine());
     }
 
     // Coroutine example
-    void WebCoroutine() {
+    IEnumerator WebCoroutine() {
 
         webViewObject.Init(
             cb: (msg) => {
@@ -93,10 +91,15 @@ public class WebMapView : MonoBehaviour {
         }
         // Load the HTML file into the WebView
         webViewObject.LoadURL($"file://{Application.persistentDataPath}/StreamingAssets/map.html");
+         // Continue executing the coroutine until the WebView is destroyed
+        while (webViewObject != null) {
+            yield return null;
+        }
     }
 
     private void UpdateRatius(string input) {
-        int ratius = int.Parse(input);
+        
+        int ratius = string.IsNullOrEmpty(input) ? 0 : int.Parse(input);
         webViewObject.EvaluateJS($"updateRadius({ratius})");
     }
 
@@ -108,7 +111,11 @@ public class WebMapView : MonoBehaviour {
     }
 
     void DeactivateWebView() {
-        Destroy(webViewObject);
+        Destroy(webViewObject.gameObject);
+         // Stop the coroutine if the GameObject is destroyed
+        if (webCoroutine != null) {
+            StopCoroutine(webCoroutine);
+        }
     }
 
     // Callback method to be called from JavaScript

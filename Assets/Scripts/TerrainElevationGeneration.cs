@@ -4,35 +4,36 @@ using System;
 
 public static class TerrainElevationGeneration {
 
-    public static void GenerateTerrain(string fileName) {
-        generateElevations(fileName);
-        Terrain terrain = generateTerrain($"{fileName}.csv");
+    public static void GenerateTerrain(bool createCSV, string fileName) {
+        ElevationResult[][] elevationsResult = generateElevations(createCSV, fileName);
+        Terrain terrain = generateTerrain(elevationsResult);
         exportTerrain(terrain, fileName);
     }
 
-   private static void generateElevations(string fileName) {
+   private static ElevationResult[][] generateElevations(bool createCSV, string fileName) {
         getVertexCoordinates();
-        string csvFileName = $"{fileName}.csv";
         int resolution = TerrainInfo.instance.resolution < 513 ? TerrainInfo.instance.resolution : TerrainInfo.instance.resolution - 1;
-        CSVHandler.WriteCSV(csvFileName, APIHandler.getElevations(getVertexCoordinates(), resolution));
+        ElevationResult [][] elevationsResult = APIHandler.getElevations(getVertexCoordinates(), resolution);
+        if(createCSV) {
+            string csvFileName = $"{fileName}.csv";
+            CSVHandler.WriteCSV(csvFileName, elevationsResult);
+        } else {
+            getMaxMinElevations(elevationsResult);
+        }
+        return elevationsResult;
     }
 
-    private static Terrain generateTerrain(string csvFileName) {
+    private static Terrain generateTerrain(ElevationResult[][] elevationsResult) {
 
         Terrain terrain = new GameObject("Terrain").AddComponent<Terrain>();
-        terrain.transform.parent = GameObject.Find("TerrainCanvas").transform;
         TerrainData terrainData = new TerrainData();
-
-        int resolution = TerrainInfo.instance.resolution < 513 ? TerrainInfo.instance.resolution : TerrainInfo.instance.resolution - 1;
-
-        ElevationResult[,]  elevationResults = CSVHandler.ReadCSV(csvFileName, resolution);
         
         terrainData.heightmapResolution = TerrainInfo.instance.resolution;
         float highestElevation = (float) TerrainInfo.instance.highestElevation;
         float lowestElevation = (float) TerrainInfo.instance.lowestElevation;
         terrainData.size = new Vector3(TerrainInfo.instance.terrainSize, highestElevation, TerrainInfo.instance.terrainSize);
 
-        terrainData.SetHeights(0, 0, calculateHeigths(elevationResults));
+        terrainData.SetHeights(0, 0, calculateHeigths(elevationsResult));
         
         terrain.terrainData = terrainData;
         return terrain;
@@ -42,7 +43,7 @@ public static class TerrainElevationGeneration {
         ExportTerrain.Export(terrain.terrainData, terrain.transform.position, fileName);
     }
 
-    private static float[,] calculateHeigths(ElevationResult[,] elevations) {
+    private static float[,] calculateHeigths(ElevationResult[][] elevations) {
 
         float lowestElevation = TerrainInfo.instance.lowestElevation;
         float highestElevation = TerrainInfo.instance.highestElevation;
@@ -58,7 +59,7 @@ public static class TerrainElevationGeneration {
                             newElevations[i, j] = newElevations[i, j-1];
                         }
                     } else {
-                        newElevations[i, j] = getScaleHeigth(elevations[i,j]);
+                        newElevations[i, j] = getScaleHeigth(elevations[i][j]);
                     }
             }
         }
@@ -98,5 +99,22 @@ public static class TerrainElevationGeneration {
         }
 
         return vertexCoordinatesList;
+    }
+
+    private static void getMaxMinElevations(ElevationResult[][] elevations) {
+        double highestElevation = double.MinValue;
+        double lowestElevation = double.MaxValue;
+        foreach (ElevationResult[] elevationResults in elevations) {
+            foreach (ElevationResult elevationResult in elevationResults) {
+                if (elevationResult.elevation > highestElevation) {
+                    highestElevation = elevationResult.elevation;
+                }
+                if (elevationResult.elevation < lowestElevation) {
+                    lowestElevation = elevationResult.elevation;
+                }
+            }
+        }
+        TerrainInfo.instance.highestElevation = (float) highestElevation;
+        TerrainInfo.instance.lowestElevation = (float) lowestElevation;
     }
 }

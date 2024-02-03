@@ -9,6 +9,8 @@ public class TerrainMenuManager : MonoBehaviour {
     public TMP_InputField fileNameInputField;
     public TMP_Dropdown dropdown;
 
+    public Toggle toggle;
+
     // Start is called before the first frame update
     void OnEnable() {
         terrainSizeInputField = transform.Find("TerrainSize").GetComponent<TMP_InputField>();
@@ -27,7 +29,7 @@ public class TerrainMenuManager : MonoBehaviour {
     string fileName = fileNameInputField.text;
     fileNameInputField.text = string.Empty;
 
-    TerrainElevationGeneration.GenerateTerrain(fileName);
+    TerrainElevationGeneration.GenerateTerrain(toggle.isOn, fileName);
 
     GameManager.instance.Terrain();
     }
