@@ -84,13 +84,14 @@ public class GPSManager : MonoBehaviour {
     private void UpdateCamaraPosition() {
         userLocation.lat = Input.location.lastData.latitude;
         userLocation.lng = Input.location.lastData.longitude;
-       
+       float userElevation = 0f;
+       //userElevation = APIHandler.getElevation(userLocation);
         Vector3 newPosition = DistanceToOrigin(userLocation);
         Vector2 newCameraPosition = new Vector2(newPosition.x, newPosition.z);
         if(isInTerrainRange(newCameraPosition, new Vector2(objetos[0].transform.position.x, objetos[0].transform.position.z))){
             camera.transform.position = GetPositionHeight(newCameraPosition);
         } else {
-            camera.transform.position = new Vector3(newPosition.x, 2f, newPosition.z);
+            camera.transform.position = new Vector3(newPosition.x, userElevation + 2f, newPosition.z);
         }
     }
 

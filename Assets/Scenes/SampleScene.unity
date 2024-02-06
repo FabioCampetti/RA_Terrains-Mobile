@@ -2720,7 +2720,7 @@ GameObject:
   - component: {fileID: 782628376}
   - component: {fileID: 782628377}
   m_Layer: 0
-  m_Name: TerrainProyectionEventManager
+  m_Name: TerrainInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

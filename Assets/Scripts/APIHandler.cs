@@ -7,6 +7,12 @@ public static class APIHandler {
 
     private const string apiKey = "YOUR_API_KEY";
     
+    public static float getElevation(Location location) {
+        string url = $"https://maps.googleapis.com/maps/api/elevation/json?locations={location.lat},{location.lng}&key={apiKey}";
+        ElevationResult[] results = apiCall(url);
+        return (float) results[0].elevation;
+    }
+    
     public static ElevationResult[][] getElevations(List<Location> vertexLocationsList, int terrainSize) {
 
         ElevationResult[][] allElevations = new ElevationResult[terrainSize][];
@@ -45,8 +51,11 @@ public static class APIHandler {
 
     private static ElevationResult[] elevationsBetweenCoordinates(Location firstCoordinate, Location secondCoordinate, int cantPoints = 512) {
          string url = $"https://maps.googleapis.com/maps/api/elevation/json?path={firstCoordinate.lat},{firstCoordinate.lng}|{secondCoordinate.lat},{secondCoordinate.lng}&samples={cantPoints}&key={apiKey}";
-         
-         using (UnityWebRequest webRequest = UnityWebRequest.Get(url)) {
+         return apiCall(url);
+    }
+
+    private static ElevationResult[] apiCall(string url) {
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url)) {
             webRequest.SendWebRequest();
 
             while (!webRequest.isDone) {
