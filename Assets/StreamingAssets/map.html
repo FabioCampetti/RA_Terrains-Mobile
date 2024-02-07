@@ -6,11 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Map</title>
     <style>
-        /* Added CSS to make the button bigger */
-        button {
-            font-size: 1.5em;
-            padding: 10px 20px;
-        }
+        .custom-button {
+        font-size: 1em;
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .red-button {
+        background-color: red;
+        color: white;
+        float: left;
+    }
+
+    .blue-button {
+        background-color: blue;
+        color: white;
+        float: center;
+    }
+
+    .green-button {
+        background-color: green;
+        color: white;
+        float: right;
+    }
+
+     /* Added CSS to make the button bigger */
+    button {
+        font-size: 1.5em;
+        padding: 10px 20px;
+    }
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
     <script>
@@ -24,6 +51,7 @@
         function initMap(terrainSize, originalLat, originalLng, isProyection) {
 
             isProyecting = isProyection;
+            radiusSize = terrainSize;
 
             originalPosition = {
                 lat: originalLat,
@@ -55,10 +83,10 @@
                 });
             }
 
-            function setupMapAndMarker(centerPosition) {
+            function setupMapAndMarker(centerPosition, radius) {
                 map = createMap(centerPosition);
                 marker = createMarker(map, centerPosition);
-                circle = createCircle(map, centerPosition, terrainSize);
+                circle = createCircle(map, centerPosition, radius);
 
                 google.maps.event.addListener(map, 'click', function (event) {
                     changeMarker(event.latLng);
@@ -72,6 +100,7 @@
              function handleLocationError(hasGeolocation, fallbackPosition) {
                 map = createMap(fallbackPosition);
                 marker = createMarker(map, fallbackPosition);
+                circle = createCircle(map, centerPosition, terrainSize);
 
                 google.maps.event.addListener(map, 'click', function (event) {
                     changeMarker(event.latLng);
@@ -89,7 +118,7 @@
                         lng: position.coords.longitude
                     };
 
-                    setupMapAndMarker(initialPosition);
+                    setupMapAndMarker(initialPosition, radiusSize);
                     getSelectedPosition();
                     createButtons();
                 }, function () {
@@ -131,34 +160,45 @@
         }
 
         function createButtons() {
+             // Remove existing buttons with the specified class
+            document.querySelectorAll(".custom-button").forEach(button => {
+                button.parentNode.removeChild(button);
+            });
+
             if (isProyecting) {
-                // Create and append buttons only if isProyecting is false
-                const userPositionButton = document.createElement("button");
-                userPositionButton.textContent = "User Position";
-                userPositionButton.onclick = function () {
+                const backButton = createButton("Back", "red-button", function () {
+                    Unity.call('Back');
+                });
+                document.body.appendChild(backButton);
+
+                const userPositionButton = createButton("User Position", "blue-button", function () {
                     changeMarker(initialPosition);
-                };
+                });
                 document.body.appendChild(userPositionButton);
 
-                const terrainOriginalPositionButton = document.createElement("button");
-                terrainOriginalPositionButton.textContent = "Terrain Original Position";
-                terrainOriginalPositionButton.onclick = function () {
+                const terrainOriginalPositionButton = createButton("Terrain Original Position", "blue-button", function () {
                     changeMarker(originalPosition);
-                };
+                });
                 document.body.appendChild(terrainOriginalPositionButton);
 
-                const proyectTerrainButton = document.createElement("button");
-                proyectTerrainButton.textContent = "Proyect Terrain";
-                proyectTerrainButton.onclick = function () {
+                const proyectTerrainButton = createButton("Proyect Terrain", "green-button", function () {
                     Unity.call('Proyect');
-                };
+                });
                 document.body.appendChild(proyectTerrainButton);
-            
+
                 // Set the height of the map based on isProyecting
                 document.getElementById('map').style.height = '85vh';
             } else {
                 // Set the height of the map based on isProyecting
                 document.getElementById('map').style.height = '100vh';
+            }
+
+            function createButton(text, className, onClickHandler) {
+                const button = document.createElement("button");
+                button.textContent = text;
+                button.className = "custom-button " + className; // Add custom-button class and specific className
+                button.onclick = onClickHandler;
+                return button;
             }
         }
     </script>
