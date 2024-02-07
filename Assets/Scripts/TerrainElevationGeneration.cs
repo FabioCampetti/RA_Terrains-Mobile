@@ -31,7 +31,7 @@ public static class TerrainElevationGeneration {
         terrainData.heightmapResolution = TerrainInfo.instance.resolution;
         float highestElevation = (float) TerrainInfo.instance.highestElevation;
         float lowestElevation = (float) TerrainInfo.instance.lowestElevation;
-        terrainData.size = new Vector3(TerrainInfo.instance.terrainSize, highestElevation, TerrainInfo.instance.terrainSize);
+        terrainData.size = new Vector3(TerrainInfo.instance.terrainSize, highestElevation - lowestElevation, TerrainInfo.instance.terrainSize);
 
         terrainData.SetHeights(0, 0, calculateHeigths(elevationsResult));
         

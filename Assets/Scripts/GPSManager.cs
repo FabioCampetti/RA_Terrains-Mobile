@@ -84,8 +84,7 @@ public class GPSManager : MonoBehaviour {
     private void UpdateCamaraPosition() {
         userLocation.lat = Input.location.lastData.latitude;
         userLocation.lng = Input.location.lastData.longitude;
-       float userElevation = 0f;
-       //userElevation = APIHandler.getElevation(userLocation);
+        float userElevation = Input.location.lastData.altitude;
         Vector3 newPosition = DistanceToOrigin(userLocation);
         Vector2 newCameraPosition = new Vector2(newPosition.x, newPosition.z);
         if(isInTerrainRange(newCameraPosition, new Vector2(objetos[0].transform.position.x, objetos[0].transform.position.z))){
@@ -127,7 +126,6 @@ public class GPSManager : MonoBehaviour {
 
         RaycastHit hit;
 
-
         float terrainHeight = 0f;
 
         // Check if the ray hits the terrain
@@ -142,6 +140,6 @@ public class GPSManager : MonoBehaviour {
             Debug.LogWarning("Raycast did not hit anything.");
         }
 
-        return new Vector3(initialPosition.x, terrainHeight + 2f, initialPosition.z);
+        return new Vector3(initialPosition.x, terrainHeight + 25f, initialPosition.z);
     }
 }
