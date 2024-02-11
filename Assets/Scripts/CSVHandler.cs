@@ -29,9 +29,10 @@ public static class CSVHandler {
             }
         }
 
+        int halfResolution = TerrainInfo.instance.resolution / 2;
         TerrainInfo.instance.highestElevation = (float) highestElevation;
         TerrainInfo.instance.lowestElevation = (float) lowestElevation;
-        
+        TerrainInfo.instance.location = elevationData[halfResolution][halfResolution].location;
         writer.Close();
     }
 

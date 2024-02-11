@@ -102,8 +102,8 @@ public static class ExportTerrain {
       {
  
          sw.WriteLine("# Unity terrainData OBJ File");
-         sw.WriteLine("# Size:" + terrainData.size.x);
-         sw.WriteLine("# Highest Elevation:" + terrainData.size.y);
+         sw.WriteLine("# Size:" + TerrainInfo.instance.terrainSize);
+         sw.WriteLine("# Highest Elevation:" + TerrainInfo.instance.highestElevation);
          sw.WriteLine("# Lowest Elevation:" + TerrainInfo.instance.lowestElevation);
          sw.WriteLine("# Resolution:" + TerrainInfo.instance.resolution);
          sw.WriteLine("# Location:" + TerrainInfo.instance.location.lat + "," + TerrainInfo.instance.location.lng);

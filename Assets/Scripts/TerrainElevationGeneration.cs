@@ -114,7 +114,9 @@ public static class TerrainElevationGeneration {
                 }
             }
         }
+        int halfResolution = TerrainInfo.instance.resolution / 2;
         TerrainInfo.instance.highestElevation = (float) highestElevation;
         TerrainInfo.instance.lowestElevation = (float) lowestElevation;
+        TerrainInfo.instance.location = elevations[halfResolution][halfResolution].location;
     }
 }
