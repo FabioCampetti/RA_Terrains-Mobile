@@ -68,7 +68,7 @@ public class TerrainController : MonoBehaviour {
         importedObject.AddComponent<ObjectViewer>();
         maxHeight.text = $"Max. Height {TerrainInfo.instance.highestElevation}m";
         minHeight.text = $"Min. Height {TerrainInfo.instance.lowestElevation}m";
-        terrainSize.text = $"Terrain Size {TerrainInfo.instance.terrainSize}m";
+        terrainSize.text = $"Terrain Size {TerrainInfo.instance.terrainSize}m²";
     }
 
     public void OnDeleteTerrainOnClick() {
