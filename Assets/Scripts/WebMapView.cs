@@ -73,7 +73,7 @@ public class WebMapView : MonoBehaviour {
             },
             ld: (msg) => {
                 // Call the JavaScript function to initialize the map
-                int terrainSize = ADDTerrainButton ? 0 : TerrainInfo.instance.terrainSize;
+                int terrainSize = ADDTerrainButton ? 0 : TerrainInfo.instance.terrainSize/2;
                 double lat = TerrainInfo.instance.location.lat;
                 double lng = TerrainInfo.instance.location.lng;
                 int isTerrainProyection = ADDTerrainButton ? 0 : 1;
@@ -99,7 +99,7 @@ public class WebMapView : MonoBehaviour {
 
     private void UpdateRatius(string input) {
         
-        int ratius = string.IsNullOrEmpty(input) ? 0 : int.Parse(input);
+        int ratius = string.IsNullOrEmpty(input) ? 0 : int.Parse(input)/2;
         webViewObject.EvaluateJS($"updateRadius({ratius})");
     }
 

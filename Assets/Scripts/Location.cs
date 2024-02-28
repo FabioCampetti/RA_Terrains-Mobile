@@ -17,8 +17,7 @@ public class Location {
         return lat + "," + lng;
     }
 
-    public static Location calculateNewCoordinates(Location location, double bearing, double distanceInMeters)
-    {
+    public static Location calculateNewCoordinates(Location location, double bearing, double distanceInMeters) {
         // Convert initial coordinates from degrees to radians
         double lat1 = location.lat * Math.PI / 180.0;
         double lon1 = location.lng * Math.PI / 180.0;

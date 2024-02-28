@@ -6,47 +6,47 @@ using System.Linq;
 public static class APIHandler {
 
     private const string apiKey = "YOUR_API_KEY";
-    
-    public static float getElevation(Location location) {
-        string url = $"https://maps.googleapis.com/maps/api/elevation/json?locations={location.lat},{location.lng}&key={apiKey}";
-        ElevationResult[] results = apiCall(url);
-        return (float) results[0].elevation;
-    }
-    
-    public static ElevationResult[][] getElevations(List<Location> vertexLocationsList, int terrainSize) {
 
-        ElevationResult[][] allElevations = new ElevationResult[terrainSize][];
+    public static ElevationResult[][] getElevations(List<Location> vertexLocationsList, int resolution) {
+
+        ElevationResult[][] allElevations = new ElevationResult[resolution][];
         ElevationResult[] leftElevations;
         ElevationResult[] rightElevations;
-        ElevationResult[] middleElevations = null;
 
-        if (terrainSize <= 512) {
+        if (resolution < 513) {
 
-           leftElevations = elevationsBetweenCoordinates(vertexLocationsList[0], vertexLocationsList[1], terrainSize);
-           rightElevations = elevationsBetweenCoordinates(vertexLocationsList[2], vertexLocationsList[3], terrainSize);
+           leftElevations = elevationsBetweenCoordinates(vertexLocationsList[0], vertexLocationsList[1], resolution);
+           rightElevations = elevationsBetweenCoordinates(vertexLocationsList[2], vertexLocationsList[3], resolution);
 
         } else {
 
-            leftElevations = generateElevations(vertexLocationsList[0], vertexLocationsList[4], vertexLocationsList[1]);
-            rightElevations = generateElevations(vertexLocationsList[2], vertexLocationsList[8], vertexLocationsList[3]);
-            middleElevations = generateElevations(vertexLocationsList[5], vertexLocationsList[6], vertexLocationsList[7]);
-
+            leftElevations = generateElevations(vertexLocationsList[0], vertexLocationsList[1], resolution);
+            rightElevations = generateElevations(vertexLocationsList[2], vertexLocationsList[3], resolution);
         }
 
-        for(int i = 0; i < terrainSize; i++) {
-            if (terrainSize <= 512) {
-                allElevations[i] = elevationsBetweenCoordinates(leftElevations[i].location, rightElevations[i].location, terrainSize);
+        for (int i = 0; i < resolution; i++) {
+            if (resolution < 513) {
+                allElevations[i] = elevationsBetweenCoordinates(leftElevations[i].location, rightElevations[i].location, resolution);
             } else {
-                allElevations[i] = generateElevations(leftElevations[i].location, middleElevations[i].location, rightElevations[i].location);
+                allElevations[i] = generateElevations(leftElevations[i].location,rightElevations[i].location, resolution);
             }
         }
         return allElevations;
     }
 
-    private static ElevationResult[] generateElevations(Location left, Location middle, Location right) {
-        ElevationResult[] firstHalf = elevationsBetweenCoordinates(left, middle);
-        ElevationResult[] secondHalf = elevationsBetweenCoordinates(middle, right);
-        return firstHalf.Concat(secondHalf).ToArray();
+    private static ElevationResult[] generateElevations(Location first, Location last, int resolution) {
+        int apiCalls = resolution / 256;
+        List<ElevationResult> middlePoints = new List<ElevationResult>(elevationsBetweenCoordinates(first, last, apiCalls + 1));
+        List<ElevationResult> elevations = new List<ElevationResult>();
+        for (int i = 0; i < apiCalls; i++) {
+            ElevationResult firstPoint = middlePoints[0];
+            middlePoints.RemoveAt(0);
+            if (elevations.Count != 0) { 
+                elevations.RemoveAt(elevations.Count - 1);
+            } 
+            elevations.AddRange(elevationsBetweenCoordinates(firstPoint.location, middlePoints[0].location, 257).ToList());
+        }
+        return elevations.ToArray();
     }
 
     private static ElevationResult[] elevationsBetweenCoordinates(Location firstCoordinate, Location secondCoordinate, int cantPoints = 512) {

@@ -12,8 +12,7 @@ public static class TerrainElevationGeneration {
 
    private static ElevationResult[][] generateElevations(bool createCSV, string fileName) {
         getVertexCoordinates();
-        int resolution = TerrainInfo.instance.resolution < 513 ? TerrainInfo.instance.resolution : TerrainInfo.instance.resolution - 1;
-        ElevationResult [][] elevationsResult = APIHandler.getElevations(getVertexCoordinates(), resolution);
+        ElevationResult [][] elevationsResult = APIHandler.getElevations(getVertexCoordinates(), TerrainInfo.instance.resolution);
         if(createCSV) {
             string csvFileName = $"{fileName}.csv";
             CSVHandler.WriteCSV(csvFileName, elevationsResult);
@@ -52,15 +51,7 @@ public static class TerrainElevationGeneration {
         float[,] newElevations = new float[heightmapResolution, heightmapResolution];
         for (int i = 0; i < heightmapResolution; i++) {
             for (int j = 0; j < heightmapResolution; j++) {
-                    if (heightmapResolution >= 513 && (i == heightmapResolution - 1 || j == heightmapResolution - 1)) {
-                        if (i == heightmapResolution - 1) {
-                            newElevations[i, j] = newElevations[i-1, j];
-                        } else {
-                            newElevations[i, j] = newElevations[i, j-1];
-                        }
-                    } else {
-                        newElevations[i, j] = getScaleHeigth(elevations[i][j]);
-                    }
+                newElevations[i, j] = getScaleHeigth(elevations[i][j]);
             }
         }
         return newElevations;
@@ -89,14 +80,6 @@ public static class TerrainElevationGeneration {
         vertexCoordinatesList.Add(Location.calculateNewCoordinates(location, 225.0, distance));
         vertexCoordinatesList.Add(Location.calculateNewCoordinates(location, 45.0, distance));
         vertexCoordinatesList.Add(Location.calculateNewCoordinates(location, 135.0, distance));
-
-        if (TerrainInfo.instance.resolution > 513) {
-            vertexCoordinatesList.Add(Location.calculateNewCoordinates(location, 270.0, distance));
-            vertexCoordinatesList.Add(Location.calculateNewCoordinates(location, 0.0, distance));
-            vertexCoordinatesList.Add(location);
-            vertexCoordinatesList.Add(Location.calculateNewCoordinates(location, 180.0, distance));
-            vertexCoordinatesList.Add(Location.calculateNewCoordinates(location, 90.0, distance));
-        }
 
         return vertexCoordinatesList;
     }
